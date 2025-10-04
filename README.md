@@ -12,7 +12,7 @@ Built with React + TypeScript + Vite, featuring real-time data updates, QR code 
 
 **1. Download the template**
 ```sh
-sudo wget -N -P /var/lib/pasarguard/templates/subscription/ https://github.com/PasarGuard/releases/latest/download/index.html
+sudo wget -N -P /var/lib/pasarguard/templates/subscription/ https://github.com/PasarGuard/subscription-template/releases/latest/download/index.html
 ```
 
 **2. Configure PasarGuard**
@@ -42,7 +42,7 @@ pasarguard restart
 
 **۱. دانلود قالب**
 ```sh
-sudo wget -N -P /var/lib/pasarguard/templates/subscription/ https://github.com/PasarGuard/releases/latest/download/index.html
+sudo wget -N -P /var/lib/pasarguard/templates/subscription/ https://github.com/PasarGuard/subscription-template/releases/latest/download/index.html
 ```
 
 **۲. پیکربندی پاسارگارد**
@@ -72,7 +72,7 @@ pasarguard restart
 
 **1. 下载模板**
 ```sh
-sudo wget -N -P /var/lib/pasarguard/templates/subscription/ https://github.com/PasarGuard/releases/latest/download/index.html
+sudo wget -N -P /var/lib/pasarguard/templates/subscription/ https://github.com/PasarGuard/subscription-template/releases/latest/download/index.html
 ```
 
 **2. 配置 PasarGuard**
@@ -102,7 +102,7 @@ pasarguard restart
 
 **1. Загрузите шаблон**
 ```sh
-sudo wget -N -P /var/lib/pasarguard/templates/subscription/ https://github.com/PasarGuard/releases/latest/download/index.html
+sudo wget -N -P /var/lib/pasarguard/templates/subscription/ https://github.com/PasarGuard/subscription-template/releases/latest/download/index.html
 ```
 
 **2. Настройте PasarGuard**
