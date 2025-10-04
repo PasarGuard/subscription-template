@@ -195,7 +195,8 @@ function App() {
             {/* Status Hero Card */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
               {/* Main Status Card */}
-              <div className={`lg:col-span-2 relative p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border ${statusStyle.borderColor} ${statusStyle.bgColor} bg-card backdrop-blur-sm shadow-lg animate-fadeIn hover:shadow-xl transition-all duration-300`}>
+              <div className={`lg:col-span-2 relative p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl border ${statusStyle.borderColor} bg-card shadow-lg animate-fadeIn hover:shadow-xl transition-all duration-300`}>
+                <div className={`absolute inset-0 ${statusStyle.bgColor} rounded-2xl sm:rounded-3xl -z-10`}></div>
                 <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 mb-6">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 sm:gap-3 mb-2">
