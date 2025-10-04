@@ -1,10 +1,14 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import HttpBackend from 'i18next-http-backend';
+
+// Import translation files directly
+import en from '../locales/en.json';
+import fa from '../locales/fa.json';
+import ru from '../locales/ru.json';
+import zh from '../locales/zh.json';
 
 i18n
-  .use(HttpBackend)
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
@@ -12,8 +16,12 @@ i18n
     supportedLngs: ['en', 'fa', 'ru', 'zh'],
     debug: false,
     
-    backend: {
-      loadPath: '/statics/locales/{{lng}}.json',
+    // Inline resources instead of loading from backend
+    resources: {
+      en: { translation: en },
+      fa: { translation: fa },
+      ru: { translation: ru },
+      zh: { translation: zh },
     },
 
     interpolation: {
