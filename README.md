@@ -19,8 +19,6 @@ Built with React + TypeScript + Vite, featuring real-time data updates, QR code 
 
 ## 📦 Installation
 
-### For PasarGuard
-
 **1. Download the template**
 ```sh
 sudo wget -N -P /var/lib/pasarguard/templates/subscription/ https://github.com/PasarGuard/subscription-template/releases/latest/download/index.html
@@ -48,8 +46,6 @@ pasarguard restart
 ---
 
 ## مراحل نصب
-
-### پاسارگارد
 
 **۱. دانلود قالب**
 ```sh
@@ -79,8 +75,6 @@ pasarguard restart
 
 ## 安装步骤
 
-### PasarGuard
-
 **1. 下载模板**
 ```sh
 sudo wget -N -P /var/lib/pasarguard/templates/subscription/ https://github.com/PasarGuard/subscription-template/releases/latest/download/index.html
@@ -108,8 +102,6 @@ pasarguard restart
 ---
 
 ## Установка
-
-### PasarGuard
 
 **1. Загрузите шаблон**
 ```sh
