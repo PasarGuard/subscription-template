@@ -2,6 +2,12 @@
 
 A modern, responsive user dashboard template for PasarGuard with multi-language support (English, Persian, Chinese, Russian).
 
+<p align="center">
+  <img src="https://raw.githubusercontent.com/PasarGuard/subscription-template/refs/heads/main/screenshots/en.png" alt="English UI" width="40%">
+  <img src="https://raw.githubusercontent.com/PasarGuard/subscription-template/refs/heads/main/screenshots/fa.png" alt="Persian UI" width="30%">
+</p>
+
+
 Built with React + TypeScript + Vite, featuring real-time data updates, QR code generation, and beautiful UI components.
 
 ## ✨ Features
