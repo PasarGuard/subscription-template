@@ -1,0 +1,95 @@
+{
+  "brand": {
+    "name": "PasarGuard",
+    "tagline": "Censorship Resistant"
+  },
+  "dashboard": {
+    "title": "User Dashboard",
+    "loading": "Loading user data...",
+    "error": "Error loading user data"
+  },
+  "userInfo": {
+    "title": "User Information",
+    "username": "Username",
+    "status": "Status",
+    "usedTraffic": "Used Traffic",
+    "dataLimit": "Data Limit",
+    "expireDate": "Expire Date",
+    "lifetimeTraffic": "Lifetime Traffic",
+    "unlimited": "Unlimited",
+    "accountStatus": "Account Status",
+    "totalLimit": "Total Limit",
+    "used": "Used",
+    "lastOnline": "Last Online",
+    "expiryDate": "Expiry Date",
+    "duration": "Duration",
+    "available": "Available"
+  },
+  "config": {
+    "title": "Configuration Links",
+    "subscriptionLink": "Subscription Link"
+  },
+  "usage": {
+    "title": "Usage Statistics",
+    "dataPoints": "Total Data Points",
+    "error": "Error loading chart data",
+    "recentActivity": "Recent Activity",
+    "totalUsage": "Total Usage"
+  },
+  "theme": {
+    "toggle": "Toggle theme",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "timeRange": {
+    "12h": "Last 12h",
+    "24h": "Last 24h",
+    "7d": "Last 7 days",
+    "30d": "Last 30 days",
+    "90d": "Last 90 days"
+  },
+  "online": "Online",
+  "notConnectedYet": "Not connected yet",
+  "expires": "Expires in",
+  "expired": "Expired",
+  "remaining": "Remaining",
+  "time": {
+    "ago": "ago",
+    "second": "second",
+    "seconds": "seconds",
+    "min": "min",
+    "mins": "mins",
+    "hour": "hour",
+    "hours": "hours",
+    "day": "day",
+    "days": "days",
+    "month": "month",
+    "months": "months",
+    "year": "year",
+    "years": "years"
+  },
+  "qr": {
+    "title": "QR Code",
+    "show": "QR Code",
+    "copy": "Copy Link",
+    "copied": "Copied!",
+    "close": "Close",
+    "error": "Failed to generate QR code",
+    "tooLong": "Link is too long for QR code",
+    "useCopy": "Please use the copy button below"
+  },
+  "clipboard": {
+    "copied": "Copied to clipboard!",
+    "failed": "Failed to copy",
+    "notSupported": "Clipboard not supported"
+  },
+  "status": {
+    "active": "Active",
+    "disabled": "Disabled",
+    "limited": "Limited",
+    "expired": "Expired",
+    "on_hold": "On Hold"
+  }
+}
+

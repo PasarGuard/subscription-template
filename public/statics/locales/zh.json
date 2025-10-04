@@ -1,0 +1,95 @@
+{
+  "brand": {
+    "name": "PasarGuard",
+    "tagline": "抵抗审查"
+  },
+  "dashboard": {
+    "title": "用户仪表板",
+    "loading": "正在加载用户数据...",
+    "error": "加载用户数据时出错"
+  },
+  "userInfo": {
+    "title": "用户信息",
+    "username": "用户名",
+    "status": "状态",
+    "usedTraffic": "已用流量",
+    "dataLimit": "流量限制",
+    "expireDate": "到期日期",
+    "lifetimeTraffic": "总流量",
+    "unlimited": "无限制",
+    "accountStatus": "账户状态",
+    "totalLimit": "总限制",
+    "used": "已使用",
+    "lastOnline": "最后在线",
+    "expiryDate": "到期日期",
+    "duration": "时长",
+    "available": "可用"
+  },
+  "config": {
+    "title": "配置链接",
+    "subscriptionLink": "订阅链接"
+  },
+  "usage": {
+    "title": "使用统计",
+    "dataPoints": "总数据点",
+    "error": "加载图表数据时出错",
+    "recentActivity": "最近活动",
+    "totalUsage": "总使用量"
+  },
+  "theme": {
+    "toggle": "切换主题",
+    "light": "浅色",
+    "dark": "深色",
+    "system": "系统"
+  },
+  "timeRange": {
+    "12h": "最近12小时",
+    "24h": "最近24小时",
+    "7d": "最近7天",
+    "30d": "最近30天",
+    "90d": "最近90天"
+  },
+  "online": "在线",
+  "notConnectedYet": "尚未连接",
+  "expires": "到期时间",
+  "expired": "已过期",
+  "remaining": "剩余",
+  "time": {
+    "ago": "前",
+    "second": "秒",
+    "seconds": "秒",
+    "min": "分钟",
+    "mins": "分钟",
+    "hour": "小时",
+    "hours": "小时",
+    "day": "天",
+    "days": "天",
+    "month": "个月",
+    "months": "个月",
+    "year": "年",
+    "years": "年"
+  },
+  "qr": {
+    "title": "二维码",
+    "show": "二维码",
+    "copy": "复制链接",
+    "copied": "已复制！",
+    "close": "关闭",
+    "error": "无法生成二维码",
+    "tooLong": "链接过长，无法生成二维码",
+    "useCopy": "请使用下方的复制按钮"
+  },
+  "clipboard": {
+    "copied": "已复制到剪贴板！",
+    "failed": "复制失败",
+    "notSupported": "不支持剪贴板"
+  },
+  "status": {
+    "active": "激活",
+    "disabled": "已禁用",
+    "limited": "受限",
+    "expired": "已过期",
+    "on_hold": "暂停"
+  }
+}
+

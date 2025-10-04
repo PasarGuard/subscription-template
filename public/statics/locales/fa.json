@@ -1,0 +1,95 @@
+{
+  "brand": {
+    "name": "پاسارگارد",
+    "tagline": "مقاوم در برابر سانسور"
+  },
+  "dashboard": {
+    "title": "داشبورد کاربری",
+    "loading": "در حال بارگذاری اطلاعات...",
+    "error": "خطا در بارگذاری اطلاعات"
+  },
+  "userInfo": {
+    "title": "اطلاعات کاربر",
+    "username": "نام کاربری",
+    "status": "وضعیت",
+    "usedTraffic": "ترافیک مصرفی",
+    "dataLimit": "حد ترافیک",
+    "expireDate": "تاریخ انقضا",
+    "lifetimeTraffic": "ترافیک کل",
+    "unlimited": "نامحدود",
+    "accountStatus": "وضعیت حساب",
+    "totalLimit": "حد کل",
+    "used": "مصرف شده",
+    "lastOnline": "آخرین اتصال",
+    "expiryDate": "تاریخ انقضا",
+    "duration": "مدت زمان",
+    "available": "در دسترس"
+  },
+  "config": {
+    "title": "لینک‌های پیکربندی",
+    "subscriptionLink": "لینک اشتراک"
+  },
+  "usage": {
+    "title": "آمار مصرف",
+    "dataPoints": "کل نقاط داده",
+    "error": "خطا در بارگذاری داده‌های نمودار",
+    "recentActivity": "فعالیت‌های اخیر",
+    "totalUsage": "مصرف کل"
+  },
+  "theme": {
+    "toggle": "تغییر تم",
+    "light": "روشن",
+    "dark": "تیره",
+    "system": "سیستم"
+  },
+  "timeRange": {
+    "12h": "۱۲ ساعت اخیر",
+    "24h": "۲۴ ساعت اخیر",
+    "7d": "۷ روز اخیر",
+    "30d": "۳۰ روز اخیر",
+    "90d": "۹۰ روز اخیر"
+  },
+  "online": "آنلاین",
+  "notConnectedYet": "هنوز متصل نشده",
+  "expires": "منقضی می‌شود در",
+  "expired": "منقضی شده",
+  "remaining": "باقی‌مانده",
+  "time": {
+    "ago": "پیش",
+    "second": "ثانیه",
+    "seconds": "ثانیه",
+    "min": "دقیقه",
+    "mins": "دقیقه",
+    "hour": "ساعت",
+    "hours": "ساعت",
+    "day": "روز",
+    "days": "روز",
+    "month": "ماه",
+    "months": "ماه",
+    "year": "سال",
+    "years": "سال"
+  },
+  "qr": {
+    "title": "کد QR",
+    "show": "کد QR",
+    "copy": "کپی لینک",
+    "copied": "کپی شد!",
+    "close": "بستن",
+    "error": "خطا در ایجاد کد QR",
+    "tooLong": "لینک برای کد QR خیلی طولانی است",
+    "useCopy": "لطفاً از دکمه کپی استفاده کنید"
+  },
+  "clipboard": {
+    "copied": "در کلیپ‌بورد کپی شد!",
+    "failed": "خطا در کپی کردن",
+    "notSupported": "کلیپ‌بورد پشتیبانی نمی‌شود"
+  },
+  "status": {
+    "active": "فعال",
+    "disabled": "غیرفعال",
+    "limited": "محدود",
+    "expired": "منقضی شده",
+    "on_hold": "در انتظار"
+  }
+}
+
