@@ -40,7 +40,19 @@
             'next_plan': user.next_plan
           } %}{{ user_data | tojson | safe }}{% else %}null{% endif %},
           links: {{ links | tojson | safe }},
-          apps: {% if apps %}{% set apps_data = [] %}{% for app in apps %}{% if app %}{% set app_dict = {} %}{% for key, value in app.__dict__.items() %}{% if value is string or value is number or value is boolean or value is none %}{% set _ = app_dict.update({key: value}) %}{% endif %}{% endfor %}{% set _ = apps_data.append(app_dict) %}{% endif %}{% endfor %}{{ apps_data | tojson | safe }}{% else %}null{% endif %},
+          apps: {% if apps %}{% set apps_data = [] %}{% for app in apps %}{% if app %}{% set download_links_data = [] %}{% for link in app.download_links %}{% if link %}{% set link_dict = {
+            'name': link.name,
+            'url': link.url,
+            'language': link.language
+          } %}{% set _ = download_links_data.append(link_dict) %}{% endif %}{% endfor %}{% set app_dict = {
+            'name': app.name,
+            'icon_url': app.icon_url,
+            'import_url': app.import_url,
+            'description': app.description,
+            'recommended': app.recommended,
+            'platform': app.platform,
+            'download_links': download_links_data
+          } %}{% set _ = apps_data.append(app_dict) %}{% endif %}{% endfor %}{{ apps_data | tojson | safe }}{% else %}null{% endif %},
         };
 
         window.__INITIAL_DATA__ = obj;
