@@ -1,4 +1,4 @@
-import { useState, memo } from 'react';
+import { useState, memo, useMemo, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Copy, Check, ScanQrCode, Files } from 'lucide-react';
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
@@ -15,32 +15,59 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
   const [selectedLink, setSelectedLink] = useState<ParsedLink | null>(null);
   const [qrModalOpen, setQrModalOpen] = useState(false);
   const [copyAllSuccess, setCopyAllSuccess] = useState(false);
+  const [showAllLinks, setShowAllLinks] = useState(false);
+  const copyAllTimeoutRef = useRef<number | null>(null);
 
-  const parsedLinks = parseLinks(links);
+  // Memoize parsed links to avoid re-parsing on every render
+  const parsedLinks = useMemo(() => parseLinks(links), [links]);
 
-  // Generate subscription link by removing /info from current path
-  const subscriptionUrl = `${window.location.origin}${window.location.pathname.replace(/\/info$/, '')}`;
+  // Memoize subscription URL to avoid recalculating on every render
+  const subscriptionUrl = useMemo(() => 
+    `${window.location.origin}${window.location.pathname.replace(/\/info$/, '')}`, 
+    []
+  );
 
-  const handleCopy = (link: ParsedLink) => {
+  // Memoize all configs text to avoid recalculating on every render
+  const allConfigsText = useMemo(() => {
+    const allConfigs = parsedLinks.map(link => link.raw);
+    return allConfigs.join('\n\n');
+  }, [parsedLinks]);
+
+  // Limit visible links to prevent memory issues with large lists
+  const visibleLinks = useMemo(() => {
+    const maxVisible = 20; // Show max 20 links initially
+    return showAllLinks ? parsedLinks : parsedLinks.slice(0, maxVisible);
+  }, [parsedLinks, showAllLinks]);
+
+  const hasMoreLinks = parsedLinks.length > 20;
+
+  const handleCopy = useCallback((link: ParsedLink) => {
     copyToClipboard(link.raw, link.raw);
-  };
+  }, [copyToClipboard]);
 
-  const handleCopySubscription = () => {
+  const handleCopySubscription = useCallback(() => {
     copyToClipboard(subscriptionUrl, subscriptionUrl);
-  };
+  }, [copyToClipboard, subscriptionUrl]);
 
-  const handleShowQR = (link: ParsedLink) => {
+  const handleShowQR = useCallback((link: ParsedLink) => {
     setSelectedLink(link);
     setQrModalOpen(true);
-  };
+  }, []);
 
-  const handleCopyAll = () => {
-    const allConfigs = parsedLinks.map(link => link.raw);
-    const configsText = allConfigs.join('\n\n');
-    copyToClipboard(configsText, configsText);
+  const handleCopyAll = useCallback(() => {
+    // Clear any existing timeout
+    if (copyAllTimeoutRef.current) {
+      clearTimeout(copyAllTimeoutRef.current);
+    }
+    
+    copyToClipboard(allConfigsText, allConfigsText);
     setCopyAllSuccess(true);
-    setTimeout(() => setCopyAllSuccess(false), 2000);
-  };
+    
+    // Debounce the success state reset
+    copyAllTimeoutRef.current = setTimeout(() => {
+      setCopyAllSuccess(false);
+    }, 2000);
+  }, [copyToClipboard, allConfigsText]);
 
   return (
     <div className="space-y-3 animate-fadeIn">
@@ -120,7 +147,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
           </div>
         </div>
 
-        {parsedLinks.map((link, index) => {
+        {visibleLinks.map((link, index) => {
           const copied = isCopied(link.raw);
           
           return (
@@ -174,10 +201,25 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
             </div>
           );
         })}
+
+        {/* Show More/Less Button */}
+        {hasMoreLinks && (
+          <div className="flex justify-center pt-2">
+            <button
+              onClick={() => setShowAllLinks(!showAllLinks)}
+              className="px-4 py-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors duration-200 hover:bg-primary/5 rounded-lg"
+            >
+              {showAllLinks 
+                ? `${t('config.showLess')} (${parsedLinks.length - 20} ${t('config.hidden')})` 
+                : `${t('config.showMore')} (${parsedLinks.length - 20} ${t('config.more')})`
+              }
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* QR Modal */}
-      {selectedLink && (
+      {/* QR Modal - Only render when open to save memory */}
+      {qrModalOpen && selectedLink && (
         <QRModal
           link={selectedLink}
           open={qrModalOpen}

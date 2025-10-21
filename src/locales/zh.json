@@ -27,7 +27,11 @@
   },
   "config": {
     "title": "配置链接",
-    "subscriptionLink": "订阅链接"
+    "subscriptionLink": "订阅链接",
+    "showMore": "显示更多",
+    "showLess": "显示更少",
+    "hidden": "隐藏",
+    "more": "更多"
   },
   "usage": {
     "title": "使用统计",

@@ -27,7 +27,11 @@
   },
   "config": {
     "title": "لینک‌های پیکربندی",
-    "subscriptionLink": "لینک اشتراک"
+    "subscriptionLink": "لینک اشتراک",
+    "showMore": "نمایش بیشتر",
+    "showLess": "نمایش کمتر",
+    "hidden": "مخفی",
+    "more": "بیشتر"
   },
   "usage": {
     "title": "آمار مصرف",
