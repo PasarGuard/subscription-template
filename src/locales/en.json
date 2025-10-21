@@ -34,7 +34,12 @@
     "dataPoints": "Total Data Points",
     "error": "Error loading chart data",
     "recentActivity": "Recent Activity",
-    "totalUsage": "Total Usage"
+    "totalUsage": "Total Usage",
+    "noDataInRange": "No data for the selected range"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "An error occurred"
   },
   "theme": {
     "toggle": "Toggle theme",
@@ -90,6 +95,24 @@
     "limited": "Limited",
     "expired": "Expired",
     "on_hold": "On Hold"
+  },
+  "apps": {
+    "title": "Client Apps",
+    "import": "Import",
+    "download": "Download",
+    "recommended": "Recommended",
+    "viewDetails": "Details",
+    "description": "Description",
+    "copyAll": "Copy All Configs",
+    "copyAllSuccess": "All configs copied to clipboard!",
+    "currentOS": "Your OS",
+    "platform": {
+      "ios": "iOS",
+      "android": "Android",
+      "windows": "Windows",
+      "linux": "Linux",
+      "other": "Other"
+    }
   }
 }
 

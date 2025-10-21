@@ -8,12 +8,14 @@ import fa from '../locales/fa.json';
 import ru from '../locales/ru.json';
 import zh from '../locales/zh.json';
 
+// Get fallback language from environment variable, default to 'fa'
+const fallbackLanguage = import.meta.env.VITE_FALLBACK_LANGUAGE || 'fa';
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    lng: 'fa', // Default language
-    fallbackLng: 'fa',
+    fallbackLng: fallbackLanguage,
     supportedLngs: ['en', 'fa', 'ru', 'zh'],
     debug: false,
     
@@ -30,7 +32,7 @@ i18n
     },
 
     detection: {
-      order: ['localStorage', 'navigator'],
+      order: ['localStorage'], // Removed 'navigator' to disable system language detection
       caches: ['localStorage'],
     },
   });

@@ -1,15 +1,55 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
     <title>{{ user.username }} - Sub Info</title>
   </head>
   <body>
     <div id="root"></div>
+    <script>
+      try {
+        const obj = {
+          user: {% if user %}{% set user_data = {
+            'id': user.id,
+            'username': user.username,
+            'status': user.status.name if user.status else 'active',
+            'used_traffic': user.used_traffic,
+            'lifetime_used_traffic': user.lifetime_used_traffic,
+            'data_limit': user.data_limit,
+            'data_limit_reset_strategy': user.data_limit_reset_strategy.name if user.data_limit_reset_strategy else 'no_reset',
+            'expire': user.expire.isoformat() if user.expire else None,
+            'on_hold_expire_duration': user.on_hold_expire_duration,
+            'on_hold_timeout': user.on_hold_timeout.isoformat() if user.on_hold_timeout else None,
+            'group_ids': user.group_ids,
+            'created_at': user.created_at.isoformat() if user.created_at else None,
+            'edit_at': user.edit_at.isoformat() if user.edit_at else None,
+            'online_at': user.online_at.isoformat() if user.online_at else None,
+            'proxy_settings': {
+              'vmess': {'id': user.proxy_settings.vmess.id|string} if user.proxy_settings.vmess else None,
+              'vless': {'id': user.proxy_settings.vless.id|string, 'flow': user.proxy_settings.vless.flow.name if user.proxy_settings.vless.flow else None} if user.proxy_settings.vless else None,
+              'trojan': {'password': user.proxy_settings.trojan.password} if user.proxy_settings.trojan else None,
+              'shadowsocks': {'password': user.proxy_settings.shadowsocks.password, 'method': user.proxy_settings.shadowsocks.method.name if user.proxy_settings.shadowsocks.method else None} if user.proxy_settings.shadowsocks else None
+            },
+            'next_plan': user.next_plan
+          } %}{{ user_data | tojson | safe }}{% else %}null{% endif %},
+          links: {{ links | tojson | safe }},
+          apps: {% if apps %}{% set apps_data = [] %}{% for app in apps %}{% if app %}{% set app_dict = {} %}{% for key, value in app.__dict__.items() %}{% if value is string or value is number or value is boolean or value is none %}{% set _ = app_dict.update({key: value}) %}{% endif %}{% endfor %}{% set _ = apps_data.append(app_dict) %}{% endif %}{% endfor %}{{ apps_data | tojson | safe }}{% else %}null{% endif %},
+        };
+
+        window.__INITIAL_DATA__ = obj;
+        console.log("✅ Initial data loaded:", window.__INITIAL_DATA__);
+      } catch (e) {
+        console.warn("❌ Failed to load initial data:", e);
+        window.__INITIAL_DATA__ = {};
+      }
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

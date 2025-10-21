@@ -8,6 +8,7 @@ import { LanguageSwitcher } from '@/components/language-switcher';
 import { OnlineBadge } from '@/components/online-badge';
 import { TrafficChart } from '@/components/traffic-chart';
 import { ConnectionLinks } from '@/components/connection-links';
+import { AppsList } from '@/components/AppsList';
 import { formatRelativeExpiry, formatDate } from '@/lib/dateFormatter';
 import { RefreshCcw } from 'lucide-react';
 import { useDir } from '@/hooks/useDir';
@@ -17,6 +18,8 @@ function App() {
   const { t, i18n } = useTranslation();
   useLanguage();
   const [timeRange, setTimeRange] = useState('7d');
+  
+  
   
   const { startTime, period } = useMemo(() => {
     const now = new Date();
@@ -54,7 +57,10 @@ function App() {
 
   const { data, error, isLoading, isValidating, refresh } = useUserInfo();
   const { data: configData } = useConfigData();
-  const { chartData, chartError } = useChartData(startTime, period);
+  
+  
+  // Fetch chart data independently - don't wait for user info
+  const { chartData, chartError } = useChartData(startTime, period, true);
   const dir = useDir();
 
 
@@ -374,45 +380,57 @@ function App() {
           {/* Conditional rendering based on available data */}
           {(() => {
             const hasLinks = configData?.links && configData.links.length > 0;
-            const hasChart = chartData && !chartError && (() => {
-              const statsKey = Object.keys(chartData.stats)[0];
-              const usageData = statsKey ? chartData.stats[statsKey] : [];
-              return usageData.length > 0;
-            })();
+            const hasChartContainer = !chartError && chartData;
 
-            // Don't render the grid if no data
-            if (!hasLinks && !hasChart) {
+            if (!hasLinks && !hasChartContainer) {
               return null;
             }
 
+            const statsKey = chartData ? Object.keys(chartData.stats)[0] : undefined;
+            const usageData = statsKey && chartData ? (chartData.stats as any)[statsKey] ?? [] : [];
+            const isChartLoading = !chartError && !chartData;
+
             return (
-              <div className={`grid grid-cols-1 gap-6 sm:gap-8 w-full ${hasLinks && hasChart ? 'lg:grid-cols-2' : ''}`}>
+              <div className={`grid grid-cols-1 gap-6 sm:gap-8 w-full ${hasLinks && hasChartContainer ? 'lg:grid-cols-2' : ''}`}>
                 {/* Connection Links - Order 2 on mobile, 1 on desktop */}
                 {hasLinks && (
-                  <div className={hasChart ? 'order-2 lg:order-1' : ''}>
+                  <div className={hasChartContainer ? 'order-2 lg:order-1' : ''}>
                     <ConnectionLinks links={configData.links} />
                   </div>
                 )}
 
                 {/* Usage Chart - Order 1 on mobile, 2 on desktop */}
-                {hasChart && (() => {
-                  const statsKey = Object.keys(chartData.stats)[0];
-                  const usageData = statsKey ? chartData.stats[statsKey] : [];
-                  
-                  return (
-                    <div className={cn("space-y-4 animate-fadeIn w-full min-w-0", hasLinks && 'order-1 lg:order-2')}>
-                      <TrafficChart 
-                        data={usageData} 
-                        error={chartError}
-                        timeRange={timeRange}
-                        onTimeRangeChange={setTimeRange}
-                      />
-                    </div>
-                  );
-                })()}
+                {hasChartContainer && (
+                  <div className={cn("space-y-4 animate-fadeIn w-full min-w-0", hasLinks && 'order-1 lg:order-2')}>
+                    <TrafficChart 
+                      data={usageData}
+                      isLoading={isChartLoading}
+                      error={chartError}
+                      timeRange={timeRange}
+                      onTimeRangeChange={setTimeRange}
+                    />
+                  </div>
+                )}
               </div>
             );
           })()}
+
+          {/* Separator */}
+          <div className="my-8 sm:my-12">
+            <div className="flex items-center gap-4 animate-fadeIn">
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
+              <div className="px-4 py-2 rounded-full bg-gradient-to-r from-primary/10 to-primary/5 text-xs font-medium text-primary border border-primary/20 hover:border-primary/30 transition-all duration-300 hover:scale-105">
+                <span className="text-sm mr-2 animate-bounce">📱</span>
+                {t('apps.title')}
+              </div>
+              <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
+            </div>
+          </div>
+
+          {/* Apps section under chart and configs */}
+          <div className="mt-6 sm:mt-8">
+            <AppsList />
+          </div>
         </div>
       </div>
     </Layout>

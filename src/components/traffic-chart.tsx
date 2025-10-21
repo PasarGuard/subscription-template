@@ -130,16 +130,7 @@ export function TrafficChart({
       _period_start: point.period_start,
     }))
   }, [data])
-
-  // Don't render if no data, error, or loading
-  if (!data || data.length === 0 || error || isLoading) {
-    return null
-  }
-
-  // Don't render if filtered data is empty
-  if (filteredData.length === 0) {
-    return null
-  }
+  const hasChartPoints = filteredData.length > 0
 
   const timeRangeOptions = [
     { value: '12h', label: t('timeRange.12h') || '12h' },
@@ -170,75 +161,96 @@ export function TrafficChart({
         </div>
       </CardHeader>
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6 overflow-x-hidden">
-        <ChartContainer
-          config={chartConfig}
-          className="aspect-auto h-[250px] w-full max-w-full"
-        >
-          <AreaChart 
-            data={filteredData}
-            margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
+        {error ? (
+          <div className="h-[250px] w-full flex items-center justify-center text-destructive text-sm">
+            {error.message || t('common.error')}
+          </div>
+        ) : isLoading || !data ? (
+          <div className="h-[250px] w-full flex items-center justify-center text-muted-foreground text-sm">
+            {t('common.loading')}
+          </div>
+        ) : !hasChartPoints ? (
+          <div className="h-[250px] w-full flex flex-col items-center justify-center gap-2 text-muted-foreground text-sm">
+            <div className="w-10 h-10 rounded-full border border-dashed border-muted-foreground/40 flex items-center justify-center">
+              <span className="text-xs">—</span>
+            </div>
+            <span>
+              {t('usage.noDataInRange')}
+            </span>
+          </div>
+        ) : (
+          <ChartContainer
+            config={chartConfig}
+            className="aspect-auto h-[250px] w-full max-w-full"
           >
-            <defs>
-              <linearGradient id="fillTraffic" x1="0" y1="0" x2="0" y2="1">
-                <stop
-                  offset="5%"
-                  stopColor="var(--color-chart-1)"
-                  stopOpacity={0.8}
-                />
-                <stop
-                  offset="95%"
-                  stopColor="var(--color-chart-1)"
-                  stopOpacity={0.1}
-                />
-              </linearGradient>
-            </defs>
-            <CartesianGrid vertical={false} strokeDasharray="3 3" />
-            <XAxis
-              dataKey="date"
-              tickLine={false}
-              axisLine={false}
-              tickMargin={8}
-              minTickGap={16}
-              tick={{ 
-                fill: 'hsl(var(--muted-foreground))',
-                fontSize: 10 
-              }}
-              tickFormatter={(value) => {
-                const d = dateUtils.toDayjs(value)
-                // For 12h and 24h, show time
-                if (timeRange === "12h" || timeRange === "24h") {
+            <AreaChart 
+              data={filteredData}
+              margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
+            >
+              <defs>
+                <linearGradient id="fillTraffic" x1="0" y1="0" x2="0" y2="1">
+                  <stop
+                    offset="5%"
+                    stopColor="var(--color-chart-1)"
+                    stopOpacity={0.8}
+                  />
+                  <stop
+                    offset="95%"
+                    stopColor="var(--color-chart-1)"
+                    stopOpacity={0.1}
+                  />
+                </linearGradient>
+              </defs>
+              <CartesianGrid vertical={false} strokeDasharray="3 3" />
+              <XAxis
+                dataKey="date"
+                tickLine={false}
+                axisLine={false}
+                tickMargin={8}
+                minTickGap={16}
+                tick={{ 
+                  fill: 'hsl(var(--muted-foreground))',
+                  fontSize: 10 
+                }}
+                tickFormatter={(value) => {
+                  const d = dateUtils.toDayjs(value)
+                  // For 12h and 24h, show time
+                  if (timeRange === "12h" || timeRange === "24h") {
+                    if (i18n.language === 'fa') {
+                      return d.toDate().toLocaleTimeString('fa-IR', {
+                        hour: "2-digit",
+                        minute: "2-digit",
+                        hour12: false
+                      })
+                    }
+                    return d.format('HH:mm')
+                  }
+                  // For days, show date
                   if (i18n.language === 'fa') {
-                    return d.toDate().toLocaleTimeString('fa-IR', {
-                      hour: "2-digit",
-                      minute: "2-digit",
-                      hour12: false
+                    return d.toDate().toLocaleDateString('fa-IR', {
+                      month: "short",
+                      day: "numeric",
                     })
                   }
-                  return d.format('HH:mm')
-                }
-                // For days, show date
-                if (i18n.language === 'fa') {
-                  return d.toDate().toLocaleDateString('fa-IR', {
-                    month: "short",
-                    day: "numeric",
-                  })
-                }
-                return d.format('MMM D')
-              }}
-            />
-            <ChartTooltip
-              cursor={false}
-              content={<CustomTrafficTooltip />}
-            />
-            <Area
-              dataKey="displayTraffic"
-              type="monotone"
-              fill="url(#fillTraffic)"
-              stroke="var(--color-chart-1)"
-              strokeWidth={2}
-            />
-          </AreaChart>
-        </ChartContainer>
+                  return d.format('MMM D')
+                }}
+              />
+              <ChartTooltip
+                cursor={false}
+                content={<CustomTrafficTooltip />}
+              />
+              <Area
+                dataKey="displayTraffic"
+                type="monotone"
+                fill="url(#fillTraffic)"
+                stroke="var(--color-chart-1)"
+                strokeWidth={2}
+                animationDuration={800}
+                animationEasing="ease-out"
+              />
+            </AreaChart>
+          </ChartContainer>
+        )}
       </CardContent>
     </Card>
   )

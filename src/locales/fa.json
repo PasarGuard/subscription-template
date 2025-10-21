@@ -34,7 +34,12 @@
     "dataPoints": "کل نقاط داده",
     "error": "خطا در بارگذاری داده‌های نمودار",
     "recentActivity": "فعالیت‌های اخیر",
-    "totalUsage": "مصرف کل"
+    "totalUsage": "مصرف کل",
+    "noDataInRange": "برای بازه انتخاب‌شده داده‌ای وجود ندارد"
+  },
+  "common": {
+    "loading": "در حال بارگذاری...",
+    "error": "خطایی رخ داد"
   },
   "theme": {
     "toggle": "تغییر تم",
@@ -90,6 +95,24 @@
     "limited": "محدود",
     "expired": "منقضی شده",
     "on_hold": "در انتظار"
+  },
+  "apps": {
+    "title": "اپلیکیشن‌های کلاینت",
+    "import": "افزودن",
+    "download": "دانلود",
+    "recommended": "پیشنهادی",
+    "viewDetails": "جزئیات",
+    "description": "توضیحات",
+    "copyAll": "کپی همه کانفیگ‌ها",
+    "copyAllSuccess": "همه کانفیگ‌ها کپی شد!",
+    "currentOS": "سیستم شما",
+    "platform": {
+      "ios": "iOS",
+      "android": "اندروید",
+      "windows": "ویندوز",
+      "linux": "لینوکس",
+      "other": "سایر"
+    }
   }
 }
 

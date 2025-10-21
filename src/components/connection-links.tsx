@@ -1,6 +1,6 @@
 import { useState, memo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Copy, Check, ScanQrCode } from 'lucide-react';
+import { Copy, Check, ScanQrCode, Files } from 'lucide-react';
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
 import { parseLinks, type ParsedLink } from '@/lib/linkParser';
 import { QRModal } from '@/components/qr-modal';
@@ -14,6 +14,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
   const { copyToClipboard, isCopied } = useCopyToClipboard();
   const [selectedLink, setSelectedLink] = useState<ParsedLink | null>(null);
   const [qrModalOpen, setQrModalOpen] = useState(false);
+  const [copyAllSuccess, setCopyAllSuccess] = useState(false);
 
   const parsedLinks = parseLinks(links);
 
@@ -33,12 +34,40 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
     setQrModalOpen(true);
   };
 
+  const handleCopyAll = () => {
+    const allConfigs = parsedLinks.map(link => link.raw);
+    const configsText = allConfigs.join('\n\n');
+    copyToClipboard(configsText, configsText);
+    setCopyAllSuccess(true);
+    setTimeout(() => setCopyAllSuccess(false), 2000);
+  };
+
   return (
     <div className="space-y-3 animate-fadeIn">
-      <h2 className="text-lg font-bold flex items-center gap-2 text-foreground">
-        <span className="text-xl">🔗</span>
-        {t('config.title')}
-      </h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-bold flex items-center gap-2 text-foreground">
+          <span className="text-xl">🔗</span>
+          {t('config.title')}
+        </h2>
+        <button
+          onClick={handleCopyAll}
+          className={`group flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-lg ${
+            copyAllSuccess 
+              ? 'bg-green-600 text-white hover:bg-green-700 shadow-green-600/25' 
+              : 'bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-primary/25'
+          }`}
+          title={copyAllSuccess ? t('apps.copyAllSuccess') : t('apps.copyAll')}
+        >
+          {copyAllSuccess ? (
+            <Check className="w-4 h-4 transition-transform duration-200 animate-pulse" />
+          ) : (
+            <Files className="w-4 h-4 transition-transform duration-200 group-hover:rotate-12" />
+          )}
+          <span className="transition-all duration-200 group-hover:translate-x-0.5">
+            {copyAllSuccess ? t('apps.copyAllSuccess') : t('apps.copyAll')}
+          </span>
+        </button>
+      </div>
       
       <div className="max-h-[400px] overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent hover:scrollbar-thumb-primary/40">
         {/* Subscription Link */}

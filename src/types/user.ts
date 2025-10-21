@@ -59,3 +59,13 @@ export interface ChartData {
   };
 }
 
+export interface AppClient {
+  name: string;
+  icon_url: string;
+  import_url: string;
+  description: Record<string, string>;
+  recommended: boolean;
+  platform: 'ios' | 'android' | 'windows' | 'linux' | string;
+  download_links: Array<{ name: string; url: string; language: string }>;
+}
+

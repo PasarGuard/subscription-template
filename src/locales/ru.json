@@ -34,7 +34,12 @@
     "dataPoints": "Всего точек данных",
     "error": "Ошибка загрузки данных графика",
     "recentActivity": "Недавняя активность",
-    "totalUsage": "Общее использование"
+    "totalUsage": "Общее использование",
+    "noDataInRange": "Нет данных для выбранного диапазона"
+  },
+  "common": {
+    "loading": "Загрузка...",
+    "error": "Произошла ошибка"
   },
   "theme": {
     "toggle": "Переключить тему",
@@ -90,6 +95,24 @@
     "limited": "Ограничен",
     "expired": "Истёк",
     "on_hold": "Приостановлен"
+  },
+  "apps": {
+    "title": "Клиентские приложения",
+    "import": "Импорт",
+    "download": "Скачать",
+    "recommended": "Рекомендовано",
+    "viewDetails": "Подробнее",
+    "description": "Описание",
+    "copyAll": "Копировать все конфиги",
+    "copyAllSuccess": "Все конфиги скопированы!",
+    "currentOS": "Ваша ОС",
+    "platform": {
+      "ios": "iOS",
+      "android": "Android",
+      "windows": "Windows",
+      "linux": "Linux",
+      "other": "Другое"
+    }
   }
 }
 
