@@ -23,6 +23,23 @@ Built with React + TypeScript + Vite, featuring real-time data updates, QR code 
 
 ---
 
+## ⚙️ Configuration
+
+### Environment Variables
+
+You can configure the template using environment variables when building:
+
+**`VITE_FALLBACK_LANGUAGE`** (optional)
+- **Default:** `fa` (Persian/Farsi)
+- **Description:** Sets the fallback language used when a translation is missing or when the user's language preference is not available
+- **Supported values:** `en`, `fa`, `ru`, `zh`
+- **Example:**
+  ```sh
+  VITE_FALLBACK_LANGUAGE=en bun run build
+  ```
+
+---
+
 ## 📦 Installation
 
 **1. Download the template**
