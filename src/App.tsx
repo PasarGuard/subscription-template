@@ -214,10 +214,10 @@ function App() {
                     <p className="text-xs sm:text-sm text-muted-foreground">{t('userInfo.accountStatus')}</p>
                   </div>
                   <div className="">
-                    <div className={`text-xl sm:text-2xl font-bold ${expiryInfo.isExpired ? 'text-destructive' : 'text-foreground'}`}>
+                    <div className={`text-xs sm:text-sm font-medium ${expiryInfo.isExpired ? 'text-destructive' : 'text-muted-foreground'}`}>
                       {expiryInfo.status}
                     </div>
-                    <p className="text-xs sm:text-sm text-muted-foreground">{expiryInfo.time}</p>
+                    <p className="text-xl sm:text-2xl font-bold text-foreground">{expiryInfo.time}</p>
                   </div>
                 </div>
 
@@ -380,7 +380,7 @@ function App() {
           {/* Conditional rendering based on available data */}
           {(() => {
             const hasLinks = configData?.links && configData.links.length > 0;
-            const hasChartContainer = !chartError && chartData;
+            const hasChartContainer = !chartError; // Always show chart container if no error (even during loading)
 
             if (!hasLinks && !hasChartContainer) {
               return null;

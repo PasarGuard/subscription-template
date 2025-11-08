@@ -11,6 +11,12 @@ import {
   FaLinux, 
   FaDesktop 
 } from 'react-icons/fa'
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 
 export function AppsList() {
     const { t, i18n } = useTranslation()
@@ -53,6 +59,7 @@ export function AppsList() {
     // Get platform order based on current OS
     const currentOS = detectOS()
     const platformOrder = getPlatformPriority(currentOS)
+    const currentPlatform = mapOSToPlatform(currentOS)
     
     // Platform icons mapping
     const platformIcons: Record<string, React.ComponentType<{ className?: string }>> = {
@@ -63,54 +70,78 @@ export function AppsList() {
         other: FaDesktop
     }
 
-    return (
-        <div className="space-y-8 animate-fadeIn">
-            {platformOrder
-                .filter((p) => platformGroups[p]?.length)
-                .map((platformKey, index) => (
-                    <div key={platformKey} className="space-y-4 animate-fadeIn" style={{ animationDelay: `${index * 100}ms` }}>
-                        <div className="flex items-center gap-3">
-                            {(() => {
-                                const IconComponent = platformIcons[platformKey];
-                                return IconComponent ? (
-                                    <IconComponent className="text-2xl" />
-                                ) : (
-                                    <FaDesktop className="text-2xl" />
-                                );
-                            })()}
-                            <h3 className="text-lg sm:text-xl font-bold text-foreground">
-                                {t(`apps.platform.${platformKey}`)}
-                            </h3>
-                            {platformKey === mapOSToPlatform(currentOS) && (
-                                <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 font-medium">
-                                    {t('apps.currentOS')}
-                                </span>
-                            )}
-                        </div>
-                        <div className="rounded-2xl border bg-card/50 p-4 sm:p-6">
-                            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6">
-                                {platformGroups[platformKey]!.map((app, idx) => {
-                                    const desc = app.description?.[currentLang] || app.description?.en || ''
-                                    // Get download links for current language, fallback to 'en', then all available
-                                    const dlAll = app.download_links || []
-                                    const dlForCurrentLang = dlAll.filter((l) => l.language === currentLang)
-                                    const dlForEn = dlAll.filter((l) => l.language === 'en')
-                                    const dlToShow = dlForCurrentLang.length > 0 ? dlForCurrentLang : (dlForEn.length > 0 ? dlForEn : dlAll)
+    // Get default open accordion (current OS platform)
+    const defaultOpenValue = platformGroups[currentPlatform]?.length ? currentPlatform : undefined
 
-                                    return (
-                                        <AppCard 
-                                            key={`${app.name}-${idx}`}
-                                            app={app}
-                                            desc={desc}
-                                            dlToShow={dlToShow}
-                                            t={t}
-                                        />
-                                    )
-                                })}
-                            </div>
-                        </div>
-                    </div>
-                ))}
+    return (
+        <div className="animate-fadeIn">
+            <Accordion
+                type="single"
+                collapsible
+                defaultValue={defaultOpenValue}
+                className="w-full space-y-3"
+            >
+                {platformOrder
+                    .filter((p) => platformGroups[p]?.length)
+                    .map((platformKey) => {
+                        const IconComponent = platformIcons[platformKey] || FaDesktop
+                        const isCurrentOS = platformKey === currentPlatform
+                        
+                        return (
+                            <AccordionItem
+                                key={platformKey}
+                                value={platformKey}
+                                className={cn(
+                                    "rounded-2xl border bg-card/50 overflow-hidden transition-all duration-300",
+                                    "hover:bg-card/80 hover:shadow-lg hover:shadow-primary/5",
+                                    "border-border/50",
+                                    isCurrentOS && "ring-1 ring-primary/30 bg-card/60"
+                                )}
+                            >
+                                <AccordionTrigger className="px-4 sm:px-6 py-4 sm:py-5 hover:no-underline [&[data-state=open]]:bg-card/40 transition-colors">
+                                    <div className="flex items-center gap-3 flex-1 text-left">
+                                        <IconComponent className="text-2xl sm:text-3xl text-foreground flex-shrink-0" />
+                                        <div className="flex items-center gap-2 flex-1 min-w-0">
+                                            <h3 className="text-base sm:text-lg font-bold text-foreground">
+                                                {t(`apps.platform.${platformKey}`)}
+                                            </h3>
+                                            {isCurrentOS && (
+                                                <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 font-medium flex-shrink-0">
+                                                    {t('apps.currentOS')}
+                                                </span>
+                                            )}
+                                            <span className="text-xs text-muted-foreground ml-auto flex-shrink-0 font-medium">
+                                                ({platformGroups[platformKey]!.length})
+                                            </span>
+                                        </div>
+                                    </div>
+                                </AccordionTrigger>
+                                <AccordionContent className="px-4 sm:px-6 pb-4 sm:pb-6 pt-0">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-4 sm:gap-6 pt-2">
+                                        {platformGroups[platformKey]!.map((app, idx) => {
+                                            const desc = app.description?.[currentLang] || app.description?.en || ''
+                                            // Get download links for current language, fallback to 'en', then all available
+                                            const dlAll = app.download_links || []
+                                            const dlForCurrentLang = dlAll.filter((l) => l.language === currentLang)
+                                            const dlForEn = dlAll.filter((l) => l.language === 'en')
+                                            const dlToShow = dlForCurrentLang.length > 0 ? dlForCurrentLang : (dlForEn.length > 0 ? dlForEn : dlAll)
+
+                                            return (
+                                                <AppCard 
+                                                    key={`${app.name}-${idx}`}
+                                                    app={app}
+                                                    desc={desc}
+                                                    dlToShow={dlToShow}
+                                                    t={t}
+                                                />
+                                            )
+                                        })}
+                                    </div>
+                                </AccordionContent>
+                            </AccordionItem>
+                        )
+                    })}
+            </Accordion>
         </div>
     )
 }
