@@ -173,16 +173,7 @@ export function TrafficChart({
               config={chartConfig}
               className="aspect-auto h-[250px] w-full max-w-full"
             >
-              {!hasChartPoints ? (
-                <div className="h-full w-full flex flex-col items-center justify-center gap-2 text-muted-foreground text-sm">
-                  <div className="w-10 h-10 rounded-full border border-dashed border-muted-foreground/40 flex items-center justify-center">
-                    <span className="text-xs">—</span>
-                  </div>
-                  <span>
-                    {t('usage.noDataInRange')}
-                  </span>
-                </div>
-              ) : (
+              {hasChartPoints ? (
                 <AreaChart 
                   data={filteredData}
                   margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
@@ -249,6 +240,17 @@ export function TrafficChart({
                     animationEasing="ease-out"
                   />
                 </AreaChart>
+              ) : !isLoading ? (
+                <div className="h-full w-full flex flex-col items-center justify-center gap-2 text-muted-foreground text-sm">
+                  <div className="w-10 h-10 rounded-full border border-dashed border-muted-foreground/40 flex items-center justify-center">
+                    <span className="text-xs">—</span>
+                  </div>
+                  <span>
+                    {t('usage.noDataInRange')}
+                  </span>
+                </div>
+              ) : (
+                <div className="h-full w-full" />
               )}
             </ChartContainer>
             
