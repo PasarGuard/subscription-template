@@ -13,11 +13,11 @@ export const useUserInfo = () => {
       fallbackData: initial?.user, // Use initial data as fallback
       revalidateIfStale: false, // Don't revalidate stale data immediately
       revalidateOnMount: false, // Don't fetch on mount if we have initial data
-      errorRetryCount: 3,
-      errorRetryInterval: 2000,
+      errorRetryCount: Infinity, // Keep retrying indefinitely
+      errorRetryInterval: 5000, // Retry every 5 seconds on error
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
-      refreshInterval: 30000, // 30 seconds interval
+      refreshInterval: 30000, // 30 seconds interval (continues even on error)
       dedupingInterval: 5000,
       onError: (error) => {
         console.warn('Failed to fetch user info:', error);

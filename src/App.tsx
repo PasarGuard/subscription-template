@@ -58,6 +58,10 @@ function App() {
   const { data, error, isLoading, isValidating, refresh } = useUserInfo();
   const { data: configData } = useConfigData();
   
+  // Check if we have initial/fallback data to use even if there's an error
+  const hasInitialData = typeof window !== 'undefined' && window.__INITIAL_DATA__?.user;
+  const hasData = data || hasInitialData;
+  const effectiveData = data || (hasInitialData ? window.__INITIAL_DATA__?.user : undefined);
   
   // Fetch chart data independently - don't wait for user info
   const { chartData, chartError } = useChartData(startTime, period, true);
@@ -66,19 +70,19 @@ function App() {
 
   // Calculate usage percentage
   const usagePercentage = useMemo(() => {
-    if (!data || !data.data_limit || data.data_limit === 0 || !data.used_traffic) return 0;
-    const percentage = (data.used_traffic / data.data_limit) * 100;
+    if (!effectiveData || !effectiveData.data_limit || effectiveData.data_limit === 0 || !effectiveData.used_traffic) return 0;
+    const percentage = (effectiveData.used_traffic / effectiveData.data_limit) * 100;
     return Math.min(isNaN(percentage) ? 0 : percentage, 100);
-  }, [data]);
+  }, [effectiveData]);
 
   // Calculate expiry information
   const expiryInfo = useMemo(() => {
-    if (!data) return { status: '', time: '', isExpired: false };
+    if (!effectiveData) return { status: '', time: '', isExpired: false };
     
     // For on_hold status, show available duration instead of expiry
-    if (data.status === 'on_hold' && data.on_hold_expire_duration) {
-      const days = Math.floor(data.on_hold_expire_duration / 86400); // Convert seconds to days
-      const hours = Math.floor((data.on_hold_expire_duration % 86400) / 3600);
+    if (effectiveData.status === 'on_hold' && effectiveData.on_hold_expire_duration) {
+      const days = Math.floor(effectiveData.on_hold_expire_duration / 86400); // Convert seconds to days
+      const hours = Math.floor((effectiveData.on_hold_expire_duration % 86400) / 3600);
       
       let timeText = '';
       if (days > 0) {
@@ -97,8 +101,8 @@ function App() {
       };
     }
     
-    return formatRelativeExpiry(data.expire, t);
-  }, [data, t]);
+    return formatRelativeExpiry(effectiveData.expire, t);
+  }, [effectiveData, t]);
 
   // Status color mapping
   const statusConfig = {
@@ -121,7 +125,8 @@ function App() {
     return `${value.toFixed(2)} ${sizes[i]}`;
   };
 
-  if (isLoading) {
+  // Show loading only if we have no data at all (not even initial data) and are still loading
+  if (isLoading && !hasData) {
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-screen">
@@ -136,7 +141,9 @@ function App() {
     );
   }
 
-  if (error) {
+  // Only show error page if we have no data at all (not even initial/fallback) and we're not loading/retrying
+  // If we have data (even from initial/fallback), continue showing it and retry in background
+  if (error && !hasData && !isLoading && !isValidating) {
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-screen">
@@ -150,9 +157,9 @@ function App() {
     );
   }
 
-  if (!data) return null;
+  if (!effectiveData) return null;
 
-  const statusStyle = statusConfig[data.status as keyof typeof statusConfig] || statusConfig.disabled;
+  const statusStyle = statusConfig[effectiveData.status as keyof typeof statusConfig] || statusConfig.disabled;
 
   return (
     <Layout>
@@ -172,22 +179,22 @@ function App() {
                   {t('dashboard.title')}
                 </h1>
                 <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                  <p dir="ltr" className="text-sm sm:text-base text-muted-foreground font-medium">@{data.username}</p>
-                  <OnlineBadge lastOnline={data.online_at} showText />
+                  <p dir="ltr" className="text-sm sm:text-base text-muted-foreground font-medium">@{effectiveData.username}</p>
+                  <OnlineBadge lastOnline={effectiveData.online_at} showText />
                   {/* Refresh Indicator */}
                   <button
                     onClick={() => {
-                      if (!isValidating && data.status !== 'disabled') {
+                      if (!isValidating && effectiveData.status !== 'disabled') {
                         refresh();
                       }
                     }}
-                    disabled={isValidating || data.status === 'disabled'}
+                    disabled={isValidating || effectiveData.status === 'disabled'}
                     className="cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-80 transition-opacity"
-                    title={data.status === 'disabled' ? 'Account disabled' : 'Refresh data'}
-                    aria-label={data.status === 'disabled' ? 'Account disabled' : 'Refresh data'}
+                    title={effectiveData.status === 'disabled' ? 'Account disabled' : 'Refresh data'}
+                    aria-label={effectiveData.status === 'disabled' ? 'Account disabled' : 'Refresh data'}
                   >
                     <RefreshCcw 
-                      className={`w-4 h-4 transition-all duration-500 ${isValidating ? 'animate-spin text-primary' : data.status === 'disabled' ? 'text-muted-foreground/50' : 'text-muted-foreground hover:text-primary'}`}
+                      className={`w-4 h-4 transition-all duration-500 ${isValidating ? 'animate-spin text-primary' : effectiveData.status === 'disabled' ? 'text-muted-foreground/50' : 'text-muted-foreground hover:text-primary'}`}
                     />
                   </button>
                 </div>
@@ -207,7 +214,7 @@ function App() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 sm:gap-3 mb-2">
                       <span className={`text-2xl sm:text-3xl lg:text-4xl font-bold ${statusStyle.color}`}>
-                        {t(`status.${data.status}`).toUpperCase()}
+                        {t(`status.${effectiveData.status}`).toUpperCase()}
                       </span>
                       <div className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${statusStyle.color.replace('text-', 'bg-')} animate-pulse`}></div>
                     </div>
@@ -276,23 +283,23 @@ function App() {
                     <div className="flex justify-between items-center">
                       <span className="text-sm sm:text-base text-muted-foreground">{t('userInfo.usedTraffic')}</span>
                       <span dir="ltr" className="text-base sm:text-lg font-bold">
-                        {formatBytes(data.used_traffic || 0)}
+                        {formatBytes(effectiveData.used_traffic || 0)}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm sm:text-base text-muted-foreground">{t('userInfo.totalLimit')}</span>
                       <span dir="ltr" className="text-base sm:text-lg font-bold">
-                        {data.data_limit && data.data_limit > 0 ? formatBytes(data.data_limit) : t('userInfo.unlimited')}
+                        {effectiveData.data_limit && effectiveData.data_limit > 0 ? formatBytes(effectiveData.data_limit) : t('userInfo.unlimited')}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-sm sm:text-base text-muted-foreground">{t('remaining')}</span>
                       <span dir="ltr" className="text-base sm:text-lg font-bold text-green-600 dark:text-green-500">
-                        {!data.data_limit || data.data_limit === 0
+                        {!effectiveData.data_limit || effectiveData.data_limit === 0
                           ? '∞'
-                          : data.used_traffic !== null && data.used_traffic !== undefined
-                          ? formatBytes(Math.max(0, data.data_limit - data.used_traffic))
-                          : formatBytes(data.data_limit)}
+                          : effectiveData.used_traffic !== null && effectiveData.used_traffic !== undefined
+                          ? formatBytes(Math.max(0, effectiveData.data_limit - effectiveData.used_traffic))
+                          : formatBytes(effectiveData.data_limit)}
                       </span>
                     </div>
                   </div>
@@ -306,7 +313,7 @@ function App() {
                   <div className="relative z-10">
                     <div className="text-xs sm:text-sm text-muted-foreground mb-2 font-medium">{t('userInfo.lifetimeTraffic')}</div>
                     <div dir="ltr" className="text-2xl sm:text-3xl font-bold text-foreground">
-                      {formatBytes(data.lifetime_used_traffic || 0)}
+                      {formatBytes(effectiveData.lifetime_used_traffic || 0)}
                     </div>
                   </div>
                 </div>
@@ -315,12 +322,12 @@ function App() {
                   <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <div className="relative z-10">
                     <div className="text-xs sm:text-sm text-muted-foreground mb-2 font-medium">
-                      {data.status === 'on_hold' ? t('userInfo.duration') : t('userInfo.expiryDate')}
+                      {effectiveData.status === 'on_hold' ? t('userInfo.duration') : t('userInfo.expiryDate')}
                     </div>
                     {(() => {
                       // For on_hold status, show available duration
-                      if (data.status === 'on_hold') {
-                        if (!data.on_hold_expire_duration || data.on_hold_expire_duration === 0) {
+                      if (effectiveData.status === 'on_hold') {
+                        if (!effectiveData.on_hold_expire_duration || effectiveData.on_hold_expire_duration === 0) {
                           return (
                             <div dir="ltr" className="text-base sm:text-lg font-bold text-foreground">
                               ∞
@@ -328,8 +335,8 @@ function App() {
                           );
                         }
                         
-                        const days = Math.floor(data.on_hold_expire_duration / 86400);
-                        const hours = Math.floor((data.on_hold_expire_duration % 86400) / 3600);
+                        const days = Math.floor(effectiveData.on_hold_expire_duration / 86400);
+                        const hours = Math.floor((effectiveData.on_hold_expire_duration % 86400) / 3600);
 
                         return (
                           <div
@@ -345,12 +352,12 @@ function App() {
                         );
                       }
                       // For other statuses
-                      const isUnlimited = !data.expire || data.expire === '0' || data.expire === '';
+                      const isUnlimited = !effectiveData.expire || effectiveData.expire === '0' || effectiveData.expire === '';
                       return (
                         <div dir='ltr' className="text-base sm:text-lg font-bold text-foreground">
                           {isUnlimited
                             ? '∞'
-                            : formatDate(data.expire, i18n.language === 'fa' ? 'fa-IR' : i18n.language)}
+                            : formatDate(effectiveData.expire, i18n.language === 'fa' ? 'fa-IR' : i18n.language)}
                         </div>
                       );
                     })()}
@@ -362,9 +369,9 @@ function App() {
                   <div className="relative z-10">
                     <div className="text-xs sm:text-sm text-muted-foreground mb-2 font-medium">{t('userInfo.lastOnline')}</div>
                     <div dir="ltr" className="flex flex-wrap items-center gap-2">
-                      <OnlineBadge lastOnline={data.online_at} />
+                      <OnlineBadge lastOnline={effectiveData.online_at} />
                       <div className="text-xs sm:text-sm font-medium text-foreground break-all">
-                        {data.online_at ? formatDate(data.online_at, i18n.language === 'fa' ? 'fa-IR' : i18n.language) : t('notConnectedYet')}
+                        {effectiveData.online_at ? formatDate(effectiveData.online_at, i18n.language === 'fa' ? 'fa-IR' : i18n.language) : t('notConnectedYet')}
                       </div>
                     </div>
                   </div>
