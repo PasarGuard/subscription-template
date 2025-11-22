@@ -23,7 +23,10 @@
     "lastOnline": "最后在线",
     "expiryDate": "到期日期",
     "duration": "时长",
-    "available": "可用"
+    "available": "可用",
+    "supportUrl": "支持",
+    "announcement": "公告",
+    "viewAnnouncement": "查看公告"
   },
   "config": {
     "title": "配置链接",

@@ -23,7 +23,10 @@
     "lastOnline": "آخرین اتصال",
     "expiryDate": "تاریخ انقضا",
     "duration": "مدت زمان",
-    "available": "در دسترس"
+    "available": "در دسترس",
+    "supportUrl": "پشتیبانی",
+    "announcement": "اعلان",
+    "viewAnnouncement": "مشاهده اعلان"
   },
   "config": {
     "title": "لینک‌های پیکربندی",

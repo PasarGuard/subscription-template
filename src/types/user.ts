@@ -41,6 +41,12 @@ export interface UserInfo {
   online_at: string | null;
 }
 
+export interface InfoHeaders {
+  'announce'?: string;
+  'announce-url'?: string;
+  'support-url'?: string;
+}
+
 export interface ConfigData {
   links: string[];
 }

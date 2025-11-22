@@ -23,7 +23,10 @@
     "lastOnline": "Last Online",
     "expiryDate": "Expiry Date",
     "duration": "Duration",
-    "available": "Available"
+    "available": "Available",
+    "supportUrl": "Support",
+    "announcement": "Announcement",
+    "viewAnnouncement": "View Announcement"
   },
   "config": {
     "title": "Configuration Links",

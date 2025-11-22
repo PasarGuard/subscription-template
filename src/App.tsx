@@ -10,7 +10,7 @@ import { TrafficChart } from '@/components/traffic-chart';
 import { ConnectionLinks } from '@/components/connection-links';
 import { AppsList } from '@/components/AppsList';
 import { formatRelativeExpiry, formatDate } from '@/lib/dateFormatter';
-import { RefreshCcw } from 'lucide-react';
+import { RefreshCcw, Bell } from 'lucide-react';
 import { useDir } from '@/hooks/useDir';
 import { cn } from './lib/utils';
 
@@ -55,13 +55,51 @@ function App() {
     return { startTime: start, period: selectedPeriod };
   }, [timeRange]);
 
-  const { data, error, isLoading, isValidating, refresh } = useUserInfo();
+  const { data, headers, error, isLoading, isValidating, refresh } = useUserInfo();
   const { data: configData } = useConfigData();
   
   // Check if we have initial/fallback data to use even if there's an error
   const hasInitialData = typeof window !== 'undefined' && window.__INITIAL_DATA__?.user;
   const hasData = data || hasInitialData;
   const effectiveData = data || (hasInitialData ? window.__INITIAL_DATA__?.user : undefined);
+  
+  // Get raw announce header value
+  const rawAnnounceHeader = useMemo(() => {
+    if (!headers) return null;
+    return (headers as any)['announce'] || (headers as any)['Announce'] || (headers as any)['ANNOUNCE'] || null;
+  }, [headers]);
+
+  // Decode announcement message (can be URL-encoded or base64)
+  const announcementMessage = useMemo(() => {
+    if (!rawAnnounceHeader || typeof rawAnnounceHeader !== 'string') return null;
+    
+    const announce = rawAnnounceHeader;
+    console.log(headers);
+    
+    
+    // Check if it's base64 encoded (format: "base64:...")
+    if (announce.startsWith('base64:')) {
+      try {
+        const base64Data = announce.substring(7).trim(); // Remove "base64:" prefix and trim whitespace
+        if (!base64Data) return null;
+        
+        // Decode base64
+        const decoded = atob(base64Data);
+        return decoded;
+      } catch (error) {
+        console.warn('Failed to decode base64 announcement:', error, 'Raw value:', announce);
+        // If decoding fails, return the original value without the prefix
+        return announce.substring(7);
+      }
+    }
+    
+    // Otherwise, try URL decoding
+    try {
+      return decodeURIComponent(announce);
+    } catch {
+      return announce;
+    }
+  }, [rawAnnounceHeader]);
   
   // Fetch chart data independently - don't wait for user info
   const { chartData, chartError } = useChartData(startTime, period, true);
@@ -159,7 +197,16 @@ function App() {
 
   if (!effectiveData) return null;
 
-  const statusStyle = statusConfig[effectiveData.status as keyof typeof statusConfig] || statusConfig.disabled;
+  // Normalize status to lowercase and ensure it's valid
+  const normalizedStatus = useMemo(() => {
+    if (!effectiveData?.status) return 'active';
+    const status = String(effectiveData.status).toLowerCase();
+    // Map valid status values
+    const validStatuses = ['active', 'disabled', 'limited', 'expired', 'on_hold'];
+    return validStatuses.includes(status) ? status : 'active';
+  }, [effectiveData?.status]);
+
+  const statusStyle = statusConfig[normalizedStatus as keyof typeof statusConfig] || statusConfig.disabled;
 
   return (
     <Layout>
@@ -184,17 +231,17 @@ function App() {
                   {/* Refresh Indicator */}
                   <button
                     onClick={() => {
-                      if (!isValidating && effectiveData.status !== 'disabled') {
+                      if (!isValidating && normalizedStatus !== 'disabled') {
                         refresh();
                       }
                     }}
-                    disabled={isValidating || effectiveData.status === 'disabled'}
+                    disabled={isValidating || normalizedStatus === 'disabled'}
                     className="cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-80 transition-opacity"
-                    title={effectiveData.status === 'disabled' ? 'Account disabled' : 'Refresh data'}
-                    aria-label={effectiveData.status === 'disabled' ? 'Account disabled' : 'Refresh data'}
+                    title={normalizedStatus === 'disabled' ? 'Account disabled' : 'Refresh data'}
+                    aria-label={normalizedStatus === 'disabled' ? 'Account disabled' : 'Refresh data'}
                   >
                     <RefreshCcw 
-                      className={`w-4 h-4 transition-all duration-500 ${isValidating ? 'animate-spin text-primary' : effectiveData.status === 'disabled' ? 'text-muted-foreground/50' : 'text-muted-foreground hover:text-primary'}`}
+                      className={`w-4 h-4 transition-all duration-500 ${isValidating ? 'animate-spin text-primary' : normalizedStatus === 'disabled' ? 'text-muted-foreground/50' : 'text-muted-foreground hover:text-primary'}`}
                     />
                   </button>
                 </div>
@@ -205,6 +252,42 @@ function App() {
             </div>
           </div>
         
+            {/* Announcements */}
+            {(rawAnnounceHeader || announcementMessage || headers?.['announce-url']) && (
+              <div className="mb-6 sm:mb-8 animate-fadeIn">
+                <div className="p-4 rounded-2xl border bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20 hover:shadow-lg transition-all duration-300">
+                  <div className="flex items-start gap-3">
+                    <div className="flex-shrink-0 mt-0.5">
+                      <Bell className="w-5 h-5 text-primary" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="text-sm font-semibold text-foreground mb-1">
+                        {t('userInfo.announcement')}
+                      </div>
+                      {announcementMessage && (
+                        <p className="text-sm text-muted-foreground mb-2 whitespace-pre-wrap break-words">
+                          {announcementMessage}
+                        </p>
+                      )}
+                      {headers?.['announce-url'] && (
+                        <a
+                          href={headers['announce-url']}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1 text-sm text-primary hover:underline font-medium"
+                        >
+                          {t('userInfo.viewAnnouncement')}
+                          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+        
             {/* Status Hero Card */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
               {/* Main Status Card */}
@@ -214,7 +297,7 @@ function App() {
                   <div className="flex-1">
                     <div className="flex items-center gap-2 sm:gap-3 mb-2">
                       <span className={`text-2xl sm:text-3xl lg:text-4xl font-bold ${statusStyle.color}`}>
-                        {t(`status.${effectiveData.status}`).toUpperCase()}
+                        {t(`status.${normalizedStatus}`).toUpperCase()}
                       </span>
                       <div className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${statusStyle.color.replace('text-', 'bg-')} animate-pulse`}></div>
                     </div>

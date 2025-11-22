@@ -1,29 +1,42 @@
 import useSWR from 'swr';
 import { fetcher, textFetcher, getBaseUrl } from '@/lib/fetcher';
 import useSWRImmutable from 'swr/immutable'
-import type { UserInfo, ConfigData, ChartData, AppClient } from '@/types/user';
+import type { UserInfo, ConfigData, ChartData, AppClient, InfoHeaders } from '@/types/user';
 
 export const useUserInfo = () => {
   const initial = typeof window !== 'undefined' ? window.__INITIAL_DATA__ : undefined;
   
-  const { data, error, isLoading, isValidating, mutate } = useSWR<UserInfo>(
+  const { data: response, error, isLoading, isValidating, mutate } = useSWR<{ data: UserInfo; headers: InfoHeaders }>(
     `${getBaseUrl()}${window.location.pathname}/info`,
     fetcher,
     {
-      fallbackData: initial?.user, // Use initial data as fallback
-      revalidateIfStale: false, // Don't revalidate stale data immediately
-      revalidateOnMount: false, // Don't fetch on mount if we have initial data
-      errorRetryCount: Infinity, // Keep retrying indefinitely
-      errorRetryInterval: 5000, // Retry every 5 seconds on error
+      // Don't use fallbackData - we'll handle initial data separately
+      // This ensures the fetcher always runs and returns { data, headers } structure
+      revalidateIfStale: false,
+      revalidateOnMount: true, // Always fetch on mount to get headers
+      errorRetryCount: Infinity,
+      errorRetryInterval: 5000,
       revalidateOnFocus: true,
       revalidateOnReconnect: true,
-      refreshInterval: 30000, // 30 seconds interval (continues even on error)
+      refreshInterval: 30000,
       dedupingInterval: 5000,
       onError: (error) => {
         console.warn('Failed to fetch user info:', error);
       }
     }
   );
+
+  // Extract data and headers from response
+  // Response should always be { data, headers } from fetcher for /info endpoint
+  const apiData = response?.data;
+  const apiHeaders = response?.headers;
+  
+  // Always prefer initial Jinja-rendered data when available to preserve server-side rendered content
+  // Only use API data if we don't have initial data (initial data takes precedence)
+  const data = initial?.user || apiData;
+  
+  // Always use headers from API response (headers are only available from API, not from initial data)
+  const headers = apiHeaders;
 
   const handleRefresh = async () => {
     await mutate();
@@ -32,7 +45,7 @@ export const useUserInfo = () => {
   // Don't show loading if we have initial data
   const shouldShowLoading = isLoading && !initial?.user;
 
-  return { data, error, isLoading: shouldShowLoading, isValidating, refresh: handleRefresh };
+  return { data, headers, error, isLoading: shouldShowLoading, isValidating, refresh: handleRefresh };
 };
 
 export const useConfigData = () => {
@@ -139,4 +152,12 @@ export const useApps = () => {
 
   return { apps: data, appsError: error, appsLoading: isLoading }
 }
+
+// Hook to get support URL from useUserInfo headers (no separate fetch needed)
+export const useSupportUrl = () => {
+  const { headers } = useUserInfo();
+  const supportUrl = headers?.['support-url'];
+  
+  return { supportUrl: supportUrl || null };
+};
 

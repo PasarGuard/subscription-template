@@ -27,25 +27,35 @@ export const useRelativeExpiryDate = (expiryDate: string | number | null | undef
   const duration = dayjs.duration(target.diff(now))
   const durationSlots: string[] = []
 
-  if (duration.years()) {
-    durationSlots.push(`${Math.abs(duration.years())} ${t(`time.${Math.abs(duration.years()) !== 1 ? 'years' : 'year'}`)}`)
-  }
+  const years = Math.abs(duration.years())
+  const months = Math.abs(duration.months())
+  const days = Math.abs(duration.days())
+  const hours = Math.abs(duration.hours())
+  const minutes = Math.abs(duration.minutes())
 
-  if (duration.months() && !duration.years()) {
-    durationSlots.push(`${Math.abs(duration.months())} ${t(`time.${Math.abs(duration.months()) !== 1 ? 'months' : 'month'}`)}`)
-  }
-
-  if (duration.days() && !duration.months() && !duration.years()) {
-    durationSlots.push(`${Math.abs(duration.days())} ${t(`time.${Math.abs(duration.days()) !== 1 ? 'days' : 'day'}`)}`)
+  if (years > 0) {
+    durationSlots.push(`${years} ${t(`time.${years !== 1 ? 'years' : 'year'}`)}`)
+    // Also show months if there are any
+    if (months > 0) {
+      durationSlots.push(`${months} ${t(`time.${months !== 1 ? 'months' : 'month'}`)}`)
+    }
+  } else if (months > 0) {
+    durationSlots.push(`${months} ${t(`time.${months !== 1 ? 'months' : 'month'}`)}`)
+    // Also show days if there are any (and we're showing months)
+    if (days > 0) {
+      durationSlots.push(`${days} ${t(`time.${days !== 1 ? 'days' : 'day'}`)}`)
+    }
+  } else if (days > 0) {
+    durationSlots.push(`${days} ${t(`time.${days !== 1 ? 'days' : 'day'}`)}`)
   }
 
   if (durationSlots.length === 0) {
-    if (duration.hours()) {
-      durationSlots.push(`${Math.abs(duration.hours())} ${t(`time.${Math.abs(duration.hours()) !== 1 ? 'hours' : 'hour'}`)}`)
+    if (hours > 0) {
+      durationSlots.push(`${hours} ${t(`time.${hours !== 1 ? 'hours' : 'hour'}`)}`)
     }
 
-    if (duration.minutes() && !duration.hours()) {
-      durationSlots.push(`${Math.abs(duration.minutes())} ${t(`time.${Math.abs(duration.minutes()) !== 1 ? 'mins' : 'min'}`)}`)
+    if (minutes > 0 && hours === 0) {
+      durationSlots.push(`${minutes} ${t(`time.${minutes !== 1 ? 'mins' : 'min'}`)}`)
     }
   }
 
@@ -126,13 +136,17 @@ export const formatRelativeExpiry = (
 
   if (years > 0) {
     durationSlots.push(`${years} ${t(`time.${years !== 1 ? 'years' : 'year'}`)}`)
-  }
-
-  if (months > 0 && years === 0) {
+    // Also show months if there are any
+    if (months > 0) {
+      durationSlots.push(`${months} ${t(`time.${months !== 1 ? 'months' : 'month'}`)}`)
+    }
+  } else if (months > 0) {
     durationSlots.push(`${months} ${t(`time.${months !== 1 ? 'months' : 'month'}`)}`)
-  }
-
-  if (days > 0 && months === 0 && years === 0) {
+    // Also show days if there are any (and we're showing months)
+    if (days > 0) {
+      durationSlots.push(`${days} ${t(`time.${days !== 1 ? 'days' : 'day'}`)}`)
+    }
+  } else if (days > 0) {
     durationSlots.push(`${days} ${t(`time.${days !== 1 ? 'days' : 'day'}`)}`)
   }
 

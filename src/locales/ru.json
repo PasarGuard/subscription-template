@@ -23,7 +23,10 @@
     "lastOnline": "Последний раз онлайн",
     "expiryDate": "Дата истечения",
     "duration": "Продолжительность",
-    "available": "Доступно"
+    "available": "Доступно",
+    "supportUrl": "Поддержка",
+    "announcement": "Объявление",
+    "viewAnnouncement": "Просмотреть объявление"
   },
   "config": {
     "title": "Ссылки конфигурации",
