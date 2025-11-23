@@ -84,7 +84,7 @@ function App() {
         if (!base64Data) return null;
         
         // Decode base64
-        const decoded = atob(base64Data);
+        const decoded = decodeURIComponent(escape(atob(base64Data)));
         return decoded;
       } catch (error) {
         console.warn('Failed to decode base64 announcement:', error, 'Raw value:', announce);
