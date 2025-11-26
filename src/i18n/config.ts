@@ -32,8 +32,10 @@ i18n
     },
 
     detection: {
-      order: ['localStorage'], // Removed 'navigator' to disable system language detection
-      caches: ['localStorage'],
+      order: ['localStorage', 'cookie'], // Removed 'navigator' to disable system language detection
+      caches: ['localStorage', 'cookie'],
+      lookupLocalStorage: 'template-lang', // Custom key to avoid conflicts with panel
+      lookupCookie: 'template-lang', // Custom cookie name to avoid conflicts with panel
     },
   });
 
