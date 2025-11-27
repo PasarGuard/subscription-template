@@ -1,0 +1,98 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+env:
+  DEFAULT_FALLBACK_LANGUAGE: fa
+
+permissions:
+  contents: write
+
+jobs:
+  detect-languages:
+    name: Detect languages
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.languages.outputs.matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Find available locales
+        id: languages
+        run: |
+          node <<'NODE' >> "$GITHUB_OUTPUT"
+          const fs = require('fs');
+          const languages = fs
+            .readdirSync('src/locales')
+            .filter((file) => file.endsWith('.json'))
+            .map((file) => file.replace(/\.json$/, ''));
+
+          if (!languages.length) {
+            throw new Error('No locale files found in src/locales');
+          }
+
+          console.log(`matrix=${JSON.stringify(languages)}`);
+          NODE
+
+  build:
+    name: Build (${{ matrix.lang }})
+    needs: detect-languages
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        lang: ${{ fromJson(needs.detect-languages.outputs.matrix) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: 1.1.x
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build for ${{ matrix.lang }}
+        run: bun run build
+        env:
+          VITE_FALLBACK_LANGUAGE: ${{ matrix.lang }}
+
+      - name: Package artifact
+        run: |
+          mkdir -p artifacts
+          cp dist/index.html "artifacts/${{ matrix.lang }}.html"
+
+          if [ "${{ matrix.lang }}" = "${{ env.DEFAULT_FALLBACK_LANGUAGE }}" ]; then
+            cp dist/index.html artifacts/index.html
+          fi
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.lang }}-html
+          path: artifacts
+          if-no-files-found: error
+
+  publish:
+    name: Attach assets to release
+    needs: build
+    if: github.event_name == 'release'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: release-assets
+
+      - name: Publish release assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: release-assets/**/*.html
