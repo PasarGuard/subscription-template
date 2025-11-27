@@ -109,12 +109,13 @@ function CustomTrafficTooltip({ active, payload }: TooltipProps<number, string>)
   )
 }
 
-export function TrafficChart({ 
-  data, 
-  isLoading = false, 
-  error, 
+
+export function TrafficChart({
+  data,
+  isLoading = false,
+  error,
   timeRange = "7d",
-  onTimeRangeChange 
+  onTimeRangeChange
 }: TrafficChartProps) {
   const { t, i18n } = useTranslation()
 
@@ -133,6 +134,21 @@ export function TrafficChart({
   }, [data])
   const hasChartPoints = filteredData.length > 0
 
+  // Calculate total traffic for the period
+  const totalPeriodTraffic = React.useMemo(() => {
+    if (!data || data.length === 0) return 0
+    return data.reduce((sum, point) => sum + point.total_traffic, 0)
+  }, [data])
+
+  // Format bytes to human-readable
+  const formatBytes = (bytes: number) => {
+    if (bytes === 0) return '0 B'
+    const k = 1024
+    const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
+    const i = Math.floor(Math.log(bytes) / Math.log(k))
+    return `${(bytes / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`
+  }
+
   const timeRangeOptions = [
     { value: '12h', label: t('timeRange.12h') || '12h' },
     { value: '24h', label: t('timeRange.24h') || '24h' },
@@ -141,10 +157,25 @@ export function TrafficChart({
     { value: '90d', label: t('timeRange.90d') || '90d' },
   ]
 
+  const isRTL = i18n.language === 'fa'
+
   return (
     <Card className="overflow-hidden">
-      <CardHeader className="flex flex-col gap-4 space-y-0 border-b pb-4">
-        <CardTitle className="text-base sm:text-lg">{t('usage.title')}</CardTitle>
+      <CardHeader className="flex flex-1 flex-col gap-4 space-y-0 border-b pb-4">
+        <div className={`flex w-full items-center flex-row justify-between gap-2 `}>
+          <CardTitle className="text-base sm:text-lg w-1/2">
+            {t('usage.title')}
+          </CardTitle>
+          <div className="w-1/2">
+          {hasChartPoints && (
+            <div className="flex flex-1">
+              <span className={`text-lg flex-1 ${isRTL ? "text-left": "text-right"} sm:text-xl font-bold text-foreground f`}>
+                {formatBytes(totalPeriodTraffic)}
+              </span>
+            </div>
+          )}
+          </div>
+        </div>
         <div className="flex flex-wrap gap-2">
           {timeRangeOptions.map((option) => (
             <button
