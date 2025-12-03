@@ -1,5 +1,5 @@
 import useSWR from 'swr';
-import { fetcher, textFetcher, getBaseUrl } from '@/lib/fetcher';
+import { fetcher, getBaseUrl } from '@/lib/fetcher';
 import useSWRImmutable from 'swr/immutable'
 import type { UserInfo, ConfigData, ChartData, AppClient, InfoHeaders } from '@/types/user';
 
@@ -53,48 +53,17 @@ export const useConfigData = () => {
     ? window.__INITIAL_DATA__?.links
     : undefined;
   
-  // If we have initial data, use it directly without making network requests
-  if (initialLinksArray && initialLinksArray.length > 0) {
-    const data: ConfigData = {
-      links: initialLinksArray.filter(link => 
-        link && link.length > 0 && (
-          link.startsWith('vless://') ||
-          link.startsWith('vmess://') ||
-          link.startsWith('trojan://') ||
-          link.startsWith('ss://')
-        )
-      )
-    };
-    return { data };
-  }
-
-  // Only make network request if no initial data is available
-  const { data: rawData } = useSWR<string>(
-    `${getBaseUrl()}${window.location.pathname}/links`,
-    textFetcher,
-    {
-      errorRetryCount: 2,
-      errorRetryInterval: 3000,
-      revalidateOnFocus: false,
-      dedupingInterval: 30000,
-      onError: (error) => {
-        console.warn("Failed to fetch config data:", error);
-      },
-    }
-  );
-
-  // Convert plain text response to ConfigData format
-  const data: ConfigData | undefined = rawData
+  // Only use Jinja-rendered data, no network requests
+  const data: ConfigData | undefined = initialLinksArray && initialLinksArray.length > 0
     ? {
-        links: rawData
-          .split('\n')
-          .map(link => link.trim())
-          .filter(link => link.length > 0 && (
+        links: initialLinksArray.filter(link => 
+          link && link.length > 0 && (
             link.startsWith('vless://') ||
             link.startsWith('vmess://') ||
             link.startsWith('trojan://') ||
             link.startsWith('ss://')
-          ))
+          )
+        )
       }
     : undefined;
 

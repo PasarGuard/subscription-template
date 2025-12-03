@@ -8,6 +8,7 @@ import { LanguageSwitcher } from '@/components/language-switcher';
 import { OnlineBadge } from '@/components/online-badge';
 import { TrafficChart } from '@/components/traffic-chart';
 import { ConnectionLinks } from '@/components/connection-links';
+import { ProminentSubscriptionLink } from '@/components/prominent-subscription-link';
 import { AppsList } from '@/components/AppsList';
 import { formatRelativeExpiry, formatDate } from '@/lib/dateFormatter';
 import { RefreshCcw, Bell } from 'lucide-react';
@@ -483,10 +484,12 @@ function App() {
             return (
               <div className={`grid grid-cols-1 gap-6 sm:gap-8 w-full ${hasLinks && hasChartContainer ? 'lg:grid-cols-2' : ''}`}>
                 {/* Connection Links - Order 2 on mobile, 1 on desktop */}
-                {hasLinks && (
+                {hasLinks ? (
                   <div className={hasChartContainer ? 'order-2 lg:order-1' : ''}>
                     <ConnectionLinks links={configData.links} />
                   </div>
+                ) : (
+                  <ProminentSubscriptionLink hasChart={hasChartContainer} />
                 )}
 
                 {/* Usage Chart - Order 1 on mobile, 2 on desktop */}
