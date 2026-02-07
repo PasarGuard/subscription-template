@@ -75,8 +75,6 @@ function App() {
     if (!rawAnnounceHeader || typeof rawAnnounceHeader !== 'string') return null;
     
     const announce = rawAnnounceHeader;
-    console.log(headers);
-    
     
     // Check if it's base64 encoded (format: "base64:...")
     if (announce.startsWith('base64:')) {
@@ -101,6 +99,16 @@ function App() {
       return announce;
     }
   }, [rawAnnounceHeader]);
+
+  const announceUrl = useMemo(() => {
+    const url = headers?.['announce-url'];
+    return typeof url === 'string' && url.trim().length > 0 ? url : null;
+  }, [headers]);
+
+  const hasAnnouncement = useMemo(() => {
+    const hasMessage = typeof announcementMessage === 'string' && announcementMessage.trim().length > 0;
+    return hasMessage || !!announceUrl;
+  }, [announcementMessage, announceUrl]);
   
   // Fetch chart data independently - don't wait for user info
   const { chartData, chartError } = useChartData(startTime, period, true);
@@ -254,7 +262,7 @@ function App() {
           </div>
         
             {/* Announcements */}
-            {(rawAnnounceHeader || announcementMessage || headers?.['announce-url']) && (
+            {hasAnnouncement && (
               <div className="mb-6 sm:mb-8 animate-fadeIn">
                 <div className="p-4 rounded-2xl border bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20 hover:shadow-lg transition-all duration-300">
                   <div className="flex items-start gap-3">
@@ -270,9 +278,9 @@ function App() {
                           {announcementMessage}
                         </p>
                       )}
-                      {headers?.['announce-url'] && (
+                      {announceUrl && (
                         <a
-                          href={headers['announce-url']}
+                          href={announceUrl}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="inline-flex items-center gap-1 text-sm text-primary hover:underline font-medium"
