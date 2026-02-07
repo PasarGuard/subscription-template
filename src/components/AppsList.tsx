@@ -1,4 +1,5 @@
 "use client"
+import React from 'react'
 import { useTranslation } from 'react-i18next'
 import { useApps } from '@/hooks/useUserData'
 import { cn } from '@/lib/utils'
@@ -18,7 +19,7 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 
-export function AppsList() {
+export const AppsList = React.memo(function AppsList() {
     const { t, i18n } = useTranslation()
     const { apps, appsError, appsLoading } = useApps()
 
@@ -48,30 +49,35 @@ export function AppsList() {
                 ? 'zh'
                 : 'en'
 
-    // Group by platform
-    const platformGroups: Record<string, typeof apps> = {}
-    apps.forEach((a) => {
-        const key = (a.platform || 'other').toLowerCase()
-        if (!platformGroups[key]) platformGroups[key] = []
-        platformGroups[key]!.push(a)
-    })
+    const platformGroups = React.useMemo(() => {
+        const groups: Record<string, typeof apps> = {}
+        apps.forEach((a) => {
+            const key = (a.platform || 'other').toLowerCase()
+            if (!groups[key]) groups[key] = []
+            groups[key]!.push(a)
+        })
+        return groups
+    }, [apps])
 
-    // Get platform order based on current OS
-    const currentOS = detectOS()
-    const platformOrder = getPlatformPriority(currentOS)
-    const currentPlatform = mapOSToPlatform(currentOS)
+    // Get platform order based on current OS once
+    const currentOS = React.useMemo(() => detectOS(), [])
+    const platformOrder = React.useMemo(() => getPlatformPriority(currentOS), [currentOS])
+    const currentPlatform = React.useMemo(() => mapOSToPlatform(currentOS), [currentOS])
     
     // Platform icons mapping
-    const platformIcons: Record<string, React.ComponentType<{ className?: string }>> = {
+    const platformIcons = React.useMemo<Record<string, React.ComponentType<{ className?: string }>>>(() => ({
         ios: FaApple,
         android: FaAndroid,
         windows: FaWindows,
         linux: FaLinux,
         other: FaDesktop
-    }
+    }), [])
 
     // Get default open accordion (current OS platform)
-    const defaultOpenValue = platformGroups[currentPlatform]?.length ? currentPlatform : undefined
+    const defaultOpenValue = React.useMemo(
+        () => (platformGroups[currentPlatform]?.length ? currentPlatform : undefined),
+        [platformGroups, currentPlatform]
+    )
 
     return (
         <div className="animate-fadeIn">
@@ -144,10 +150,10 @@ export function AppsList() {
             </Accordion>
         </div>
     )
-}
+})
 
 // Minimal App Card Component
-function AppCard({ app, desc, dlToShow, t }: {
+const AppCard = React.memo(function AppCard({ app, desc, dlToShow, t }: {
     app: any;
     desc: string;
     dlToShow: any[];
@@ -220,6 +226,6 @@ function AppCard({ app, desc, dlToShow, t }: {
             </div>
         </div>
     )
-}
+})
 
 

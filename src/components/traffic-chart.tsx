@@ -47,7 +47,7 @@ interface FormattedDataPoint {
   _period_start: string
 }
 
-function CustomTrafficTooltip({ active, payload }: TooltipProps<number, string>) {
+const CustomTrafficTooltip = React.memo(function CustomTrafficTooltip({ active, payload }: TooltipProps<number, string>) {
   const { t, i18n } = useTranslation()
   
   if (!active || !payload || !payload.length) return null
@@ -107,9 +107,9 @@ function CustomTrafficTooltip({ active, payload }: TooltipProps<number, string>)
       </div>
     </div>
   )
-}
+})
 
-export function TrafficChart({ 
+export const TrafficChart = React.memo(function TrafficChart({ 
   data, 
   isLoading = false, 
   error, 
@@ -133,13 +133,13 @@ export function TrafficChart({
   }, [data])
   const hasChartPoints = filteredData.length > 0
 
-  const timeRangeOptions = [
+  const timeRangeOptions = React.useMemo(() => ([
     { value: '12h', label: t('timeRange.12h') || '12h' },
     { value: '24h', label: t('timeRange.24h') || '24h' },
     { value: '7d', label: t('timeRange.7d') || '7d' },
     { value: '30d', label: t('timeRange.30d') || '30d' },
     { value: '90d', label: t('timeRange.90d') || '90d' },
-  ]
+  ]), [t])
 
   return (
     <Card className="overflow-hidden">
@@ -270,5 +270,5 @@ export function TrafficChart({
       </CardContent>
     </Card>
   )
-}
+})
 

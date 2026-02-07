@@ -17,6 +17,7 @@ export default defineConfig({
     },
   },
   build: {
+    target: 'es2020',
     // Increase chunk size warning limit
     chunkSizeWarningLimit: 1000,
     // Enable source maps for debugging in production
@@ -26,6 +27,9 @@ export default defineConfig({
     // Note: manualChunks is incompatible with viteSingleFile plugin
     // which uses inlineDynamicImports, so we remove it
   },
+  esbuild: {
+    drop: ['console', 'debugger']
+  },
   // Optimize dependencies
   optimizeDeps: {
     include: [
@@ -34,7 +38,6 @@ export default defineConfig({
       'react-i18next',
       'i18next',
       'swr',
-      'date-fns',
       'recharts'
     ]
   },
