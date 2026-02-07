@@ -31,9 +31,9 @@ export const useUserInfo = () => {
   const apiData = response?.data;
   const apiHeaders = response?.headers;
   
-  // Always prefer initial Jinja-rendered data when available to preserve server-side rendered content
-  // Only use API data if we don't have initial data (initial data takes precedence)
-  const data = initial?.user || apiData;
+  // Use initial Jinja data only as first paint fallback.
+  // Once API data arrives, it should replace the initial snapshot.
+  const data = apiData ?? initial?.user;
   
   // Always use headers from API response (headers are only available from API, not from initial data)
   const headers = apiHeaders;

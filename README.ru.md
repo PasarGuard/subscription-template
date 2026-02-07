@@ -1,57 +1,56 @@
-# Шаблон PasarGuard
+# Шаблон подписки PasarGuard
 
-Современный адаптивный шаблон пользовательской панели для PasarGuard с поддержкой нескольких языков (английский, персидский, китайский, русский).
+Адаптивный шаблон страницы подписки для PasarGuard.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/PasarGuard/subscription-template/refs/heads/main/screenshots/en.png" alt="Английский интерфейс" width="40%">
-  <img src="https://raw.githubusercontent.com/PasarGuard/subscription-template/refs/heads/main/screenshots/fa.png" alt="Персидский интерфейс" width="30%">
+  <img src="https://raw.githubusercontent.com/PasarGuard/subscription-template/refs/heads/main/screenshots/en.png" alt="English UI" width="40%">
+  <img src="https://raw.githubusercontent.com/PasarGuard/subscription-template/refs/heads/main/screenshots/fa.png" alt="Persian UI" width="30%">
 </p>
 
-Построен на React + TypeScript + Vite, с функциями обновления данных в реальном времени, генерации QR-кодов и красивыми компонентами интерфейса.
+## Возможности
 
-## ✨ Возможности
+- Языки: `en`, `fa`, `zh`, `ru`
+- Пользователь может менять язык в интерфейсе
+- Адаптивная верстка
+- Темный режим
+- QR-код для ссылок подключения
+- Копирование в один клик
 
-- 🌍 Поддержка нескольких языков (EN, FA, ZH, RU) - пользователи могут изменить язык в интерфейсе
-- 📱 Полностью адаптивный дизайн
-- 🎨 Современный интерфейс с поддержкой темной темы
-- 🔄 Обновление данных в реальном времени (интервал 10 секунд)
-- 📊 Графики использования трафика
-- 🔗 Генерация QR-кодов для ссылок подключения
-- 📋 Одним кликом копирование в буфер обмена
-- ⚡ Быстрый и легкий
+## Быстрый старт (рекомендуется)
 
----
-
-## 📦 Установка
-
-**1. Загрузите шаблон**
-
-Каждый релиз включает версии по умолчанию с языковыми префиксами. Версия по умолчанию использует персидский (fa) в качестве языка по умолчанию. Пользователи могут изменить язык в интерфейсе, но вы можете установить другой язык по умолчанию:
+Запустите скрипт установки (выберите язык по умолчанию):
 
 ```sh
-# Загрузить версию по умолчанию (персидский по умолчанию)
-sudo wget -N -O /var/lib/pasarguard/templates/subscription/index.html https://github.com/PasarGuard/subscription-template/releases/latest/download/index.html
-
-# Или загрузить конкретный язык по умолчанию (en, fa, zh, ru)
-sudo wget -N -O /var/lib/pasarguard/templates/subscription/index.html https://github.com/PasarGuard/subscription-template/releases/latest/download/ru.html
+curl -fsSL https://raw.githubusercontent.com/PasarGuard/subscription-template/main/install.sh | sudo bash -s -- --lang ru
 ```
 
-**2. Настройте PasarGuard**
+Поддерживаемые значения `--lang`: `en`, `fa`, `zh`, `ru`
+
+## Установка вручную
+
+1. Скачайте шаблон:
 
 ```sh
-echo 'CUSTOM_TEMPLATES_DIRECTORY="/var/lib/pasarguard/templates/"' | sudo tee -a /opt/pasarguard/.env
-echo 'SUBSCRIPTION_PAGE_TEMPLATE="subscription/index.html"' | sudo tee -a /opt/pasarguard/.env
+sudo mkdir -p /var/lib/pasarguard/templates/subscription
+sudo wget -O /var/lib/pasarguard/templates/subscription/index.html \
+https://github.com/PasarGuard/subscription-template/releases/latest/download/ru.html
 ```
 
-Или вручную отредактируйте `/opt/pasarguard/.env` и раскомментируйте:
-```
+2. Настройте PasarGuard в `/opt/pasarguard/.env`:
+
+```dotenv
 CUSTOM_TEMPLATES_DIRECTORY="/var/lib/pasarguard/templates/"
 SUBSCRIPTION_PAGE_TEMPLATE="subscription/index.html"
 ```
 
-**3. Перезапустите PasarGuard**
+3. Перезапустите:
 
 ```sh
 pasarguard restart
 ```
 
+## Другие языки
+
+- [English](README.md)
+- [فارسی (Persian)](README.fa.md)
+- [中文 (Chinese)](README.zh.md)
