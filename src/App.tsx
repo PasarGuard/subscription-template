@@ -113,6 +113,12 @@ function App() {
   // Fetch chart data independently - don't wait for user info
   const { chartData, chartError } = useChartData(startTime, period, true);
   const dir = useDir();
+  const normalizedStatus = useMemo(() => {
+    if (!effectiveData?.status) return 'active';
+    const status = String(effectiveData.status).toLowerCase();
+    const validStatuses = ['active', 'disabled', 'limited', 'expired', 'on_hold'];
+    return validStatuses.includes(status) ? status : 'active';
+  }, [effectiveData?.status]);
 
 
   // Calculate usage percentage
@@ -205,15 +211,6 @@ function App() {
   }
 
   if (!effectiveData) return null;
-
-  // Normalize status to lowercase and ensure it's valid
-  const normalizedStatus = useMemo(() => {
-    if (!effectiveData?.status) return 'active';
-    const status = String(effectiveData.status).toLowerCase();
-    // Map valid status values
-    const validStatuses = ['active', 'disabled', 'limited', 'expired', 'on_hold'];
-    return validStatuses.includes(status) ? status : 'active';
-  }, [effectiveData?.status]);
 
   const statusStyle = statusConfig[normalizedStatus as keyof typeof statusConfig] || statusConfig.disabled;
 
