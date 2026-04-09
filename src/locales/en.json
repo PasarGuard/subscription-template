@@ -29,11 +29,7 @@
   },
   "config": {
     "title": "Configuration Links",
-    "subscriptionLink": "Subscription Link",
-    "showMore": "Show More",
-    "showLess": "Show Less",
-    "hidden": "hidden",
-    "more": "more"
+    "subscriptionLink": "Subscription Link"
   },
   "usage": {
     "title": "Usage Statistics",

@@ -22,9 +22,11 @@ import { Spinner } from "@/components/ui/spinner"
 const chartConfig = {
   traffic: {
     label: "Traffic",
-    color: "hsl(var(--chart-1))",
+    color: "var(--primary)",
   },
 } satisfies ChartConfig
+
+const TRAFFIC_SERIES_COLOR = chartConfig.traffic.color ?? "var(--primary)"
 
 interface TrafficDataPoint {
   period_start: string
@@ -199,12 +201,12 @@ export const TrafficChart = React.memo(function TrafficChart({
                     <linearGradient id="fillTraffic" x1="0" y1="0" x2="0" y2="1">
                       <stop
                         offset="5%"
-                        stopColor="var(--color-chart-1)"
+                        stopColor={TRAFFIC_SERIES_COLOR}
                         stopOpacity={0.8}
                       />
                       <stop
                         offset="95%"
-                        stopColor="var(--color-chart-1)"
+                        stopColor={TRAFFIC_SERIES_COLOR}
                         stopOpacity={0.1}
                       />
                     </linearGradient>
@@ -251,7 +253,7 @@ export const TrafficChart = React.memo(function TrafficChart({
                     dataKey="displayTraffic"
                     type="monotone"
                     fill="url(#fillTraffic)"
-                    stroke="var(--color-chart-1)"
+                    stroke={TRAFFIC_SERIES_COLOR}
                     strokeWidth={2}
                     animationDuration={800}
                     animationEasing="ease-out"

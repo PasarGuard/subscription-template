@@ -17,7 +17,6 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
   const [selectedLink, setSelectedLink] = useState<ParsedLink | null>(null);
   const [qrModalOpen, setQrModalOpen] = useState(false);
   const [copyAllSuccess, setCopyAllSuccess] = useState(false);
-  const [showAllLinks, setShowAllLinks] = useState(false);
   const copyAllTimeoutRef = useRef<number | null>(null);
 
   // Memoize parsed links to avoid re-parsing on every render
@@ -34,14 +33,6 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
     const allConfigs = parsedLinks.map(link => link.raw);
     return allConfigs.join('\n');
   }, [parsedLinks]);
-
-  // Limit visible links to prevent memory issues with large lists
-  const visibleLinks = useMemo(() => {
-    const maxVisible = 20; // Show max 20 links initially
-    return showAllLinks ? parsedLinks : parsedLinks.slice(0, maxVisible);
-  }, [parsedLinks, showAllLinks]);
-
-  const hasMoreLinks = parsedLinks.length > 20;
 
   const handleCopy = useCallback((link: ParsedLink) => {
     const prepared = prepareSubscriptionContentForCopy(link.raw);
@@ -172,7 +163,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
           </div>
         </div>
 
-        {visibleLinks.map((link, index) => {
+        {parsedLinks.map((link, index) => {
           const copied = isCopied(link.raw);
           
           return (
@@ -236,20 +227,6 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
           );
         })}
 
-        {/* Show More/Less Button */}
-        {hasMoreLinks && (
-          <div className="flex justify-center pt-2">
-            <button
-              onClick={() => setShowAllLinks(!showAllLinks)}
-              className="px-4 py-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors duration-200 hover:bg-primary/5 rounded-lg"
-            >
-              {showAllLinks 
-                ? `${t('config.showLess')} (${parsedLinks.length - 20} ${t('config.hidden')})` 
-                : `${t('config.showMore')} (${parsedLinks.length - 20} ${t('config.more')})`
-              }
-            </button>
-          </div>
-        )}
       </div>
 
       {/* Keep the dialog mounted after close so Radix can play exit animations */}
