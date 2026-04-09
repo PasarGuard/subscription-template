@@ -17,7 +17,6 @@
     "expireDate": "Expire Date",
     "lifetimeTraffic": "Lifetime Traffic",
     "unlimited": "Unlimited",
-    "accountStatus": "Account Status",
     "totalLimit": "Total Limit",
     "used": "Used",
     "lastOnline": "Last Online",
@@ -55,11 +54,12 @@
     "system": "System"
   },
   "timeRange": {
-    "12h": "Last 12h",
-    "24h": "Last 24h",
-    "7d": "Last 7 days",
-    "30d": "Last 30 days",
-    "90d": "Last 90 days"
+    "1h": "1h",
+    "12h": "12h",
+    "24h": "24h",
+    "7d": "7 days",
+    "30d": "30 days",
+    "90d": "90 days"
   },
   "online": "Online",
   "notConnectedYet": "Not connected yet",

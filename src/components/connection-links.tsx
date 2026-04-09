@@ -72,7 +72,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
   return (
     <div className="space-y-3 animate-fadeIn">
       <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold flex items-center gap-2 text-foreground">
+        <h2 className="page-section-title flex items-center gap-2">
           <span className="text-xl">🔗</span>
           {t('config.title')}
         </h2>
@@ -101,7 +101,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
         <div className="group relative p-3 rounded-lg border-2 border-primary/30 bg-primary/5 hover:border-primary/60 transition-all duration-200">
           <div className="flex items-center gap-2">
             {/* Subscription Badge */}
-            <div className="px-2 py-0.5 rounded bg-primary text-primary-foreground text-[10px] font-bold uppercase flex-shrink-0">
+            <div className="page-badge px-2 py-0.5 rounded bg-primary text-primary-foreground flex-shrink-0">
               SUB
             </div>
             
@@ -109,7 +109,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
             <span className="text-sm">📱</span>
             
             {/* Name */}
-            <div className="flex-1 min-w-0 text-xs font-medium text-foreground truncate">
+            <div className="page-item-title flex-1 min-w-0 truncate">
               {t('config.subscriptionLink')}
             </div>
 
@@ -157,7 +157,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
             >
               <div className="flex items-center gap-2">
                 {/* Protocol Badge */}
-                <div className="px-2 py-0.5 rounded bg-primary text-primary-foreground text-[10px] font-bold uppercase flex-shrink-0">
+                <div className="page-badge px-2 py-0.5 rounded bg-primary text-primary-foreground flex-shrink-0">
                   {link.protocol}
                 </div>
                 
@@ -167,7 +167,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
                 )}
                 
                 {/* Name */}
-                <div className="flex-1 min-w-0 text-xs font-medium text-foreground truncate">
+                <div className="page-item-title flex-1 min-w-0 truncate">
                   {link.name}
                 </div>
 

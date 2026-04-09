@@ -209,3 +209,33 @@
   }
 
 }
+
+@layer components {
+  .page-section-title {
+    @apply text-lg sm:text-xl font-bold tracking-tight text-foreground;
+  }
+
+  .page-label {
+    @apply text-sm font-medium leading-5 text-muted-foreground;
+  }
+
+  .page-value {
+    @apply text-base sm:text-lg font-semibold text-foreground;
+  }
+
+  .page-metric-value {
+    @apply text-xl sm:text-2xl font-bold tracking-tight text-foreground;
+  }
+
+  .page-item-title {
+    @apply text-sm sm:text-base font-medium leading-5 text-foreground;
+  }
+
+  .page-meta {
+    @apply text-sm leading-5 text-muted-foreground;
+  }
+
+  .page-badge {
+    @apply text-xs font-semibold uppercase tracking-wide;
+  }
+}

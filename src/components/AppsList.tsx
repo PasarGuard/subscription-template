@@ -104,19 +104,19 @@ export const AppsList = React.memo(function AppsList() {
                                     isCurrentOS && "ring-1 ring-primary/30 bg-card/60"
                                 )}
                             >
-                                <AccordionTrigger className="px-4 sm:px-6 py-4 sm:py-5 hover:no-underline [&[data-state=open]]:bg-card/40 transition-colors">
+                                <AccordionTrigger className="px-4 sm:px-6 py-4 sm:py-5 hover:no-underline items-center cursor-pointer [&[data-state=open]]:bg-card/40 transition-colors">
                                     <div className="flex items-center gap-3 flex-1 text-left">
                                         <IconComponent className="text-2xl sm:text-3xl text-foreground flex-shrink-0" />
                                         <div className="flex items-center gap-2 flex-1 min-w-0">
-                                            <h3 className="text-base sm:text-lg font-bold text-foreground">
+                                            <h3 className="page-section-title">
                                                 {t(`apps.platform.${platformKey}`)}
                                             </h3>
                                             {isCurrentOS && (
-                                                <span className="text-xs px-2 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 font-medium flex-shrink-0">
+                                                <span className="page-badge px-2 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 flex-shrink-0">
                                                     {t('apps.currentOS')}
                                                 </span>
                                             )}
-                                            <span className="text-xs text-muted-foreground ml-auto flex-shrink-0 font-medium">
+                                            <span className="page-label ml-auto flex-shrink-0">
                                                 ({platformGroups[platformKey]!.length})
                                             </span>
                                         </div>
@@ -174,20 +174,20 @@ const AppCard = React.memo(function AppCard({ app, desc, dlToShow, t }: {
                 )}
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-1.5">
-                        <h4 className="font-medium text-sm truncate">{app.name}</h4>
+                        <h4 className="page-item-title truncate">{app.name}</h4>
                         {app.recommended && (
-                            <span className="text-[9px] px-1 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 flex-shrink-0">
+                            <span className="page-badge px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 flex-shrink-0">
                                 {t('apps.recommended')}
                             </span>
                         )}
                     </div>
-                    <div className="text-[10px] text-muted-foreground uppercase">{app.platform}</div>
+                    <div className="page-badge text-muted-foreground">{app.platform}</div>
                 </div>
             </div>
 
             {/* Description - limited to 2 lines */}
             {desc && (
-                <div className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
+                <div className="page-meta line-clamp-2">
                     {desc}
                 </div>
             )}
@@ -200,7 +200,7 @@ const AppCard = React.memo(function AppCard({ app, desc, dlToShow, t }: {
                         <a 
                             key={i} 
                             href={dl.url} 
-                            className="text-xs px-2 py-1 rounded border hover:bg-muted inline-flex items-center gap-1 transition-colors" 
+                            className="text-sm px-2 py-1 rounded border hover:bg-muted inline-flex items-center gap-1 transition-colors"
                             target="_blank" 
                             rel="noreferrer"
                             title={dl.name}
@@ -214,7 +214,7 @@ const AppCard = React.memo(function AppCard({ app, desc, dlToShow, t }: {
                     {app.import_url && (
                         <a 
                             href={app.import_url} 
-                            className="text-xs px-2 py-1 rounded bg-primary text-primary-foreground hover:opacity-90 inline-flex items-center gap-1 transition-opacity" 
+                            className="text-sm px-2 py-1 rounded bg-primary text-primary-foreground hover:opacity-90 inline-flex items-center gap-1 transition-opacity"
                             target="_blank" 
                             rel="noreferrer"
                         >

@@ -56,7 +56,7 @@ export const QRModal = memo(({ link, open, onOpenChange }: QRModalProps) => {
           <DialogTitle>
             <div className="flex items-center gap-2">
               <ScanQrCode className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="text-sm sm:text-base">{t('qr.title')}</span>
+              <span className="text-base">{t('qr.title')}</span>
             </div>
           </DialogTitle>
         </DialogHeader>
@@ -76,24 +76,24 @@ export const QRModal = memo(({ link, open, onOpenChange }: QRModalProps) => {
           ) : (
             <div className="flex flex-col items-center justify-center p-6 sm:p-8 bg-muted/30 rounded-lg sm:rounded-xl w-full">
               <AlertCircle className="w-10 h-10 sm:w-12 sm:h-12 text-yellow-500 mb-2 sm:mb-3" />
-              <p className="text-xs sm:text-sm text-center text-muted-foreground mb-1 sm:mb-2 font-medium">
+              <p className="text-sm text-center text-muted-foreground mb-1 sm:mb-2 font-medium">
                 {t('qr.tooLong')}
               </p>
-              <p className="text-[10px] sm:text-xs text-center text-muted-foreground">
+              <p className="text-sm text-center text-muted-foreground">
                 {t('qr.useCopy')}
               </p>
             </div>
           )}
 
           {/* Link Info */}
-          <div className="w-full p-2.5 sm:p-3 rounded-lg bg-muted/30 flex items-center gap-2 text-xs">
-            <div className="px-1.5 sm:px-2 py-0.5 sm:py-1 rounded bg-primary text-primary-foreground text-[9px] sm:text-[10px] font-bold uppercase">
+          <div className="w-full p-2.5 sm:p-3 rounded-lg bg-muted/30 flex items-center gap-2 text-sm">
+            <div className="page-badge px-1.5 sm:px-2 py-0.5 sm:py-1 rounded bg-primary text-primary-foreground">
               {link.protocol === 'unknown' ? 'SUB' : link.protocol}
             </div>
             {link.emoji && (
               <span className="text-sm sm:text-base">{link.emoji}</span>
             )}
-            <span className="font-medium text-foreground flex-1 truncate text-[11px] sm:text-xs">
+            <span className="page-item-title flex-1 truncate">
               {link.name}
             </span>
           </div>
@@ -102,7 +102,7 @@ export const QRModal = memo(({ link, open, onOpenChange }: QRModalProps) => {
           <Button
             onClick={handleCopy}
             size="sm"
-            className="w-full gap-2 h-9 sm:h-10 text-xs sm:text-sm"
+            className="w-full gap-2 h-9 sm:h-10 text-sm"
             variant={copied ? 'default' : 'default'}
           >
             {copied ? (

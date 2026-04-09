@@ -17,7 +17,6 @@
     "expireDate": "到期日期",
     "lifetimeTraffic": "总流量",
     "unlimited": "无限制",
-    "accountStatus": "账户状态",
     "totalLimit": "总限制",
     "used": "已使用",
     "lastOnline": "最后在线",
@@ -55,11 +54,12 @@
     "system": "系统"
   },
   "timeRange": {
-    "12h": "最近12小时",
-    "24h": "最近24小时",
-    "7d": "最近7天",
-    "30d": "最近30天",
-    "90d": "最近90天"
+    "1h": "1小时",
+    "12h": "12小时",
+    "24h": "24小时",
+    "7d": "7天",
+    "30d": "30天",
+    "90d": "90天"
   },
   "online": "在线",
   "notConnectedYet": "尚未连接",

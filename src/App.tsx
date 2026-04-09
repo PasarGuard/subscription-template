@@ -19,15 +19,19 @@ function App() {
   const { t, i18n } = useTranslation();
   useLanguage();
   const [timeRange, setTimeRange] = useState('7d');
-  
-  
-  
+
+
+
   const { startTime, period } = useMemo(() => {
     const now = new Date();
     const start = new Date();
     let selectedPeriod = 'hour';
-    
+
     switch (timeRange) {
+      case "1h":
+        start.setTime(now.getTime() - 1 * 60 * 60 * 1000);
+        selectedPeriod = 'minute';
+        break;
       case "12h":
         start.setTime(now.getTime() - 12 * 60 * 60 * 1000);
         selectedPeriod = 'hour';
@@ -52,18 +56,18 @@ function App() {
         start.setTime(now.getTime() - 7 * 24 * 60 * 60 * 1000);
         selectedPeriod = 'day';
     }
-    
+
     return { startTime: start, period: selectedPeriod };
   }, [timeRange]);
 
   const { data, headers, error, isLoading, isValidating, refresh } = useUserInfo();
   const { data: configData } = useConfigData();
-  
+
   // Check if we have initial/fallback data to use even if there's an error
   const hasInitialData = typeof window !== 'undefined' && window.__INITIAL_DATA__?.user;
   const hasData = data || hasInitialData;
   const effectiveData = data || (hasInitialData ? window.__INITIAL_DATA__?.user : undefined);
-  
+
   // Get raw announce header value
   const rawAnnounceHeader = useMemo(() => {
     if (!headers) return null;
@@ -73,15 +77,15 @@ function App() {
   // Decode announcement message (can be URL-encoded or base64)
   const announcementMessage = useMemo(() => {
     if (!rawAnnounceHeader || typeof rawAnnounceHeader !== 'string') return null;
-    
+
     const announce = rawAnnounceHeader;
-    
+
     // Check if it's base64 encoded (format: "base64:...")
     if (announce.startsWith('base64:')) {
       try {
         const base64Data = announce.substring(7).trim(); // Remove "base64:" prefix and trim whitespace
         if (!base64Data) return null;
-        
+
         // Decode base64
         const decoded = decodeURIComponent(escape(atob(base64Data)));
         return decoded;
@@ -91,7 +95,7 @@ function App() {
         return announce.substring(7);
       }
     }
-    
+
     // Otherwise, try URL decoding
     try {
       return decodeURIComponent(announce);
@@ -109,7 +113,7 @@ function App() {
     const hasMessage = typeof announcementMessage === 'string' && announcementMessage.trim().length > 0;
     return hasMessage || !!announceUrl;
   }, [announcementMessage, announceUrl]);
-  
+
   // Fetch chart data independently - don't wait for user info
   const { chartData, chartError } = useChartData(startTime, period, true);
   const dir = useDir();
@@ -131,12 +135,12 @@ function App() {
   // Calculate expiry information
   const expiryInfo = useMemo(() => {
     if (!effectiveData) return { status: '', time: '', isExpired: false };
-    
+
     // For on_hold status, show available duration instead of expiry
     if (effectiveData.status === 'on_hold' && effectiveData.on_hold_expire_duration) {
       const days = Math.floor(effectiveData.on_hold_expire_duration / 86400); // Convert seconds to days
       const hours = Math.floor((effectiveData.on_hold_expire_duration % 86400) / 3600);
-      
+
       let timeText = '';
       if (days > 0) {
         timeText = `${days} ${t(days === 1 ? 'time.day' : 'time.days')}`;
@@ -146,20 +150,20 @@ function App() {
       } else if (hours > 0) {
         timeText = `${hours} ${t(hours === 1 ? 'time.hour' : 'time.hours')}`;
       }
-      
+
       return {
         status: t('userInfo.available'),
         time: timeText,
         isExpired: false
       };
     }
-    
+
     return formatRelativeExpiry(effectiveData.expire, t);
   }, [effectiveData, t]);
 
   // Status color mapping
   const statusConfig = {
-    active: { color: 'text-green-500', bgColor: 'bg-green-500/10', borderColor: 'border-green-500/20', glow: 'shadow-green-500/50' },
+    active: { color: 'text-green-500', bgColor: '', borderColor: '', glow: '' },
     disabled: { color: 'text-gray-500', bgColor: 'bg-gray-500/10', borderColor: 'border-gray-500/20', glow: 'shadow-gray-500/50' },
     limited: { color: 'text-red-500', bgColor: 'bg-red-500/10', borderColor: 'border-red-500/20', glow: 'shadow-red-500/50' },
     expired: { color: 'text-yellow-500', bgColor: 'bg-yellow-500/10', borderColor: 'border-yellow-500/20', glow: 'shadow-yellow-500/50' },
@@ -221,19 +225,29 @@ function App() {
         <div className="fixed inset-0 bg-grid-pattern opacity-[0.02] pointer-events-none"></div>
         <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
         <div className="fixed bottom-0 left-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-3xl pointer-events-none"></div>
-        
+
         {/* Hero Section */}
         <div className="relative">
           <div className="container relative px-4 pt-12 mx-auto max-w-7xl">
             {/* Header */}
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 sm:gap-0 mb-8 sm:mb-12 animate-fadeIn">
-              <div className="flex-1">
+            <div className="flex sm:items-center sm:justify-between gap-4 sm:gap-0 mb-8 sm:mb-12 animate-fadeIn">
+              <div className="flex-1 min-w-0">
                 <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold mb-2 text-foreground">
                   {t('dashboard.title')}
                 </h1>
-                <div className="flex flex-wrap items-center gap-2 sm:gap-3">
-                  <p dir="ltr" className="text-sm sm:text-base text-muted-foreground font-medium">@{effectiveData.username}</p>
-                  <OnlineBadge lastOnline={effectiveData.online_at} showText />
+                <div className="flex min-w-0 items-center gap-2 text-end sm:gap-3">
+                  <div className="flex min-w-0 max-w-full items-center gap-2 sm:gap-3">
+                    <p
+                      dir="ltr"
+                      title={effectiveData.username}
+                      className="max-w-[45vw] truncate text-start text-sm font-medium text-muted-foreground sm:max-w-[16rem] sm:text-base md:max-w-[20rem] lg:max-w-[24rem]"
+                    >
+                      {effectiveData.username}
+                    </p>
+                    <div className="shrink-0">
+                      <OnlineBadge lastOnline={effectiveData.online_at} showText />
+                    </div>
+                  </div>
                   {/* Refresh Indicator */}
                   <button
                     onClick={() => {
@@ -242,22 +256,22 @@ function App() {
                       }
                     }}
                     disabled={isValidating || normalizedStatus === 'disabled'}
-                    className="cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/50 rounded-sm disabled:opacity-50 disabled:cursor-not-allowed hover:opacity-80 transition-opacity"
+                    className="shrink-0 cursor-pointer rounded-sm focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-50 hover:opacity-80 transition-opacity"
                     title={normalizedStatus === 'disabled' ? 'Account disabled' : 'Refresh data'}
                     aria-label={normalizedStatus === 'disabled' ? 'Account disabled' : 'Refresh data'}
                   >
-                    <RefreshCcw 
+                    <RefreshCcw
                       className={`w-4 h-4 transition-all duration-500 ${isValidating ? 'animate-spin text-primary' : normalizedStatus === 'disabled' ? 'text-muted-foreground/50' : 'text-muted-foreground hover:text-primary'}`}
                     />
                   </button>
                 </div>
               </div>
               <div className="flex items-center gap-2 sm:gap-3">
-              <LanguageSwitcher />
-              <ThemeToggle />
+                <LanguageSwitcher />
+                <ThemeToggle />
+              </div>
             </div>
-          </div>
-        
+
             {/* Announcements */}
             {hasAnnouncement && (
               <div className="mb-6 sm:mb-8 animate-fadeIn">
@@ -267,11 +281,11 @@ function App() {
                       <Bell className="w-5 h-5 text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm font-semibold text-foreground mb-1">
+                      <div className="page-label mb-1 text-foreground">
                         {t('userInfo.announcement')}
                       </div>
                       {announcementMessage && (
-                        <p className="text-sm text-muted-foreground mb-2 whitespace-pre-wrap break-words">
+                        <p className="page-meta mb-2 whitespace-pre-wrap break-words">
                           {announcementMessage}
                         </p>
                       )}
@@ -293,7 +307,7 @@ function App() {
                 </div>
               </div>
             )}
-        
+
             {/* Status Hero Card */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
               {/* Main Status Card */}
@@ -307,13 +321,12 @@ function App() {
                       </span>
                       <div className={`w-2 h-2 sm:w-3 sm:h-3 rounded-full ${statusStyle.color.replace('text-', 'bg-')} animate-pulse`}></div>
                     </div>
-                    <p className="text-xs sm:text-sm text-muted-foreground">{t('userInfo.accountStatus')}</p>
                   </div>
                   <div className="">
-                    <div className={`text-xs sm:text-sm font-medium ${expiryInfo.isExpired ? 'text-destructive' : 'text-muted-foreground'}`}>
+                    <div className={`page-label ${expiryInfo.isExpired ? 'text-destructive' : 'text-muted-foreground'}`}>
                       {expiryInfo.status}
                     </div>
-                    <p className="text-xl sm:text-2xl font-bold text-foreground">{expiryInfo.time}</p>
+                    <p className="page-metric-value">{expiryInfo.time}</p>
                   </div>
                 </div>
 
@@ -364,31 +377,31 @@ function App() {
                     </svg>
                     <div className="absolute inset-0 flex flex-col items-center justify-center">
                       <span className="text-2xl sm:text-3xl font-bold">{Math.min(usagePercentage, 100).toFixed(0)}%</span>
-                      <span className="text-xs text-muted-foreground">{t('userInfo.used')}</span>
+                      <span className="page-label">{t('userInfo.used')}</span>
                     </div>
                   </div>
 
                   <div className="flex-1 w-full space-y-4 sm:space-y-5">
                     <div className="flex justify-between items-center">
-                      <span className="text-sm sm:text-base text-muted-foreground">{t('userInfo.usedTraffic')}</span>
-                      <span dir="ltr" className="text-base sm:text-lg font-bold">
+                      <span className="page-label">{t('userInfo.usedTraffic')}</span>
+                      <span dir="ltr" className="page-value">
                         {formatBytes(effectiveData.used_traffic || 0)}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm sm:text-base text-muted-foreground">{t('userInfo.totalLimit')}</span>
-                      <span dir="ltr" className="text-base sm:text-lg font-bold">
+                      <span className="page-label">{t('userInfo.totalLimit')}</span>
+                      <span dir="ltr" className="page-value">
                         {effectiveData.data_limit && effectiveData.data_limit > 0 ? formatBytes(effectiveData.data_limit) : t('userInfo.unlimited')}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-sm sm:text-base text-muted-foreground">{t('remaining')}</span>
-                      <span dir="ltr" className="text-base sm:text-lg font-bold text-green-600 dark:text-green-500">
+                      <span className="page-label">{t('remaining')}</span>
+                      <span dir="ltr" className="page-value text-green-600 dark:text-green-500">
                         {!effectiveData.data_limit || effectiveData.data_limit === 0
                           ? '∞'
                           : effectiveData.used_traffic !== null && effectiveData.used_traffic !== undefined
-                          ? formatBytes(Math.max(0, effectiveData.data_limit - effectiveData.used_traffic))
-                          : formatBytes(effectiveData.data_limit)}
+                            ? formatBytes(Math.max(0, effectiveData.data_limit - effectiveData.used_traffic))
+                            : formatBytes(effectiveData.data_limit)}
                       </span>
                     </div>
                   </div>
@@ -400,8 +413,8 @@ function App() {
                 <div className="relative p-4 sm:p-6 rounded-2xl border bg-card overflow-hidden animate-fadeIn hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 group">
                   <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <div className="relative z-10">
-                    <div className="text-xs sm:text-sm text-muted-foreground mb-2 font-medium">{t('userInfo.lifetimeTraffic')}</div>
-                    <div dir="ltr" className="text-2xl sm:text-3xl font-bold text-foreground">
+                    <div className="page-label mb-2">{t('userInfo.lifetimeTraffic')}</div>
+                    <div dir="ltr" className="page-metric-value sm:text-3xl">
                       {formatBytes(effectiveData.lifetime_used_traffic || 0)}
                     </div>
                   </div>
@@ -410,7 +423,7 @@ function App() {
                 <div className="relative p-4 sm:p-6 rounded-2xl border bg-card overflow-hidden animate-fadeIn hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 group">
                   <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <div className="relative z-10">
-                    <div className="text-xs sm:text-sm text-muted-foreground mb-2 font-medium">
+                    <div className="page-label mb-2">
                       {effectiveData.status === 'on_hold' ? t('userInfo.duration') : t('userInfo.expiryDate')}
                     </div>
                     {(() => {
@@ -418,32 +431,32 @@ function App() {
                       if (effectiveData.status === 'on_hold') {
                         if (!effectiveData.on_hold_expire_duration || effectiveData.on_hold_expire_duration === 0) {
                           return (
-                            <div dir="ltr" className="text-base sm:text-lg font-bold text-foreground">
+                            <div dir="ltr" className="page-value">
                               ∞
                             </div>
                           );
                         }
-                        
+
                         const days = Math.floor(effectiveData.on_hold_expire_duration / 86400);
                         const hours = Math.floor((effectiveData.on_hold_expire_duration % 86400) / 3600);
 
                         return (
                           <div
                             dir={dir === "rtl" ? "rtl" : "ltr"}
-                            className={cn("text-base sm:text-lg font-bold text-foreground")}
+                            className="page-value"
                           >
                             {days > 0
                               ? `${days} ${t(days === 1 ? 'time.day' : 'time.days')}`
                               : hours > 0
-                              ? `${hours} ${t(hours === 1 ? 'time.hour' : 'time.hours')}`
-                              : '∞'}
+                                ? `${hours} ${t(hours === 1 ? 'time.hour' : 'time.hours')}`
+                                : '∞'}
                           </div>
                         );
                       }
                       // For other statuses
                       const isUnlimited = !effectiveData.expire || effectiveData.expire === '0' || effectiveData.expire === '';
                       return (
-                        <div dir='ltr' className="text-base sm:text-lg font-bold text-foreground">
+                        <div dir='ltr' className="page-value">
                           {isUnlimited
                             ? '∞'
                             : formatDate(effectiveData.expire, i18n.language === 'fa' ? 'fa-IR' : i18n.language)}
@@ -456,10 +469,10 @@ function App() {
                 <div className="relative p-4 sm:p-6 rounded-2xl border bg-card overflow-hidden animate-fadeIn hover:shadow-lg hover:shadow-primary/5 transition-all duration-300 group">
                   <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                   <div className="relative z-10">
-                    <div className="text-xs sm:text-sm text-muted-foreground mb-2 font-medium">{t('userInfo.lastOnline')}</div>
+                    <div className="page-label mb-2">{t('userInfo.lastOnline')}</div>
                     <div dir="ltr" className="flex flex-wrap items-center gap-2">
                       <OnlineBadge lastOnline={effectiveData.online_at} />
-                      <div className="text-xs sm:text-sm font-medium text-foreground break-all">
+                      <div className="text-sm font-medium text-foreground break-all">
                         {effectiveData.online_at ? formatDate(effectiveData.online_at, i18n.language === 'fa' ? 'fa-IR' : i18n.language) : t('notConnectedYet')}
                       </div>
                     </div>
@@ -500,7 +513,7 @@ function App() {
                 {/* Usage Chart - Order 1 on mobile, 2 on desktop */}
                 {hasChartContainer && (
                   <div className={cn("space-y-4 animate-fadeIn w-full min-w-0", hasLinks && 'order-1 lg:order-2')}>
-                    <TrafficChart 
+                    <TrafficChart
                       data={usageData}
                       isLoading={isChartLoading}
                       error={chartError}
@@ -517,7 +530,7 @@ function App() {
           <div className="my-8 sm:my-12">
             <div className="flex items-center gap-4 animate-fadeIn">
               <div className="flex-1 h-px bg-gradient-to-r from-transparent via-border to-transparent"></div>
-              <div className="px-4 py-2 rounded-full bg-gradient-to-r from-primary/10 to-primary/5 text-xs font-medium text-primary border border-primary/20 hover:border-primary/30 transition-all duration-300 hover:scale-105">
+              <div className="px-4 py-2 rounded-full bg-gradient-to-r from-primary/10 to-primary/5 text-sm font-medium text-primary border border-primary/20 hover:border-primary/30 transition-all duration-300 hover:scale-105">
                 <span className="text-sm mr-2 animate-bounce">📱</span>
                 {t('apps.title')}
               </div>

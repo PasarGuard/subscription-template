@@ -91,15 +91,15 @@ const CustomTrafficTooltip = React.memo(function CustomTrafficTooltip({ active, 
   
   return (
     <div 
-      className={`min-w-[140px] rounded-lg border border-border bg-background p-3 text-xs shadow-xl ${isRTL ? 'text-right' : 'text-left'}`}
+      className={`min-w-[140px] rounded-lg border border-border bg-background p-3 text-sm shadow-xl ${isRTL ? 'text-right' : 'text-left'}`}
       dir={isRTL ? 'rtl' : 'ltr'}
     >
-      <div className={`mb-2 text-xs font-semibold text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
+      <div className={`mb-2 text-sm font-semibold text-muted-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
         <span dir="ltr" className="inline-block">
           {formattedDate}
         </span>
       </div>
-      <div className={`text-sm font-bold text-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
+      <div className={`text-base font-bold text-foreground ${isRTL ? 'text-right' : 'text-left'}`}>
         <span>{t('usage.totalUsage')}: </span>
         <span dir="ltr" className="inline-block font-mono">
           {formatBytes(data._bytes)}
@@ -134,6 +134,7 @@ export const TrafficChart = React.memo(function TrafficChart({
   const hasChartPoints = filteredData.length > 0
 
   const timeRangeOptions = React.useMemo(() => ([
+    { value: '1h', label: t('timeRange.1h') || '1h' },
     { value: '12h', label: t('timeRange.12h') || '12h' },
     { value: '24h', label: t('timeRange.24h') || '24h' },
     { value: '7d', label: t('timeRange.7d') || '7d' },
@@ -144,13 +145,13 @@ export const TrafficChart = React.memo(function TrafficChart({
   return (
     <Card className="overflow-hidden">
       <CardHeader className="flex flex-col gap-4 space-y-0 border-b pb-4">
-        <CardTitle className="text-base sm:text-lg">{t('usage.title')}</CardTitle>
+        <CardTitle className="page-section-title">{t('usage.title')}</CardTitle>
         <div className="flex flex-wrap gap-2">
           {timeRangeOptions.map((option) => (
             <button
               key={option.value}
               onClick={() => onTimeRangeChange?.(option.value)}
-              className={`px-3 py-1.5 text-xs sm:text-sm font-medium rounded-lg transition-all ${
+              className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-all ${
                 timeRange === option.value
                   ? 'bg-primary text-primary-foreground shadow-sm'
                   : 'bg-muted text-muted-foreground hover:bg-muted/80'
@@ -201,12 +202,12 @@ export const TrafficChart = React.memo(function TrafficChart({
                     minTickGap={16}
                     tick={{ 
                       fill: 'hsl(var(--muted-foreground))',
-                      fontSize: 10 
+                      fontSize: 11
                     }}
                     tickFormatter={(value) => {
                       const d = dateUtils.toDayjs(value)
-                      // For 12h and 24h, show time
-                      if (timeRange === "12h" || timeRange === "24h") {
+                      // For short ranges, show time
+                      if (timeRange === "1h" || timeRange === "12h" || timeRange === "24h") {
                         if (i18n.language === 'fa') {
                           return d.toDate().toLocaleTimeString('fa-IR', {
                             hour: "2-digit",
