@@ -13,7 +13,6 @@
     "username": "Username",
     "status": "Status",
     "usedTraffic": "Used Traffic",
-    "dataLimit": "Data Limit",
     "expireDate": "Expire Date",
     "lifetimeTraffic": "Lifetime Traffic",
     "unlimited": "Unlimited",
@@ -61,7 +60,7 @@
   "notConnectedYet": "Not connected yet",
   "expires": "Expires in",
   "expired": "Expired",
-  "remaining": "Remaining",
+  "remaining": "Remaining traffic",
   "time": {
     "ago": "ago",
     "second": "second",
@@ -107,7 +106,7 @@
     "on_hold": "On Hold"
   },
   "apps": {
-    "title": "Client Apps",
+    "title": "Applications",
     "import": "Import",
     "download": "Download",
     "recommended": "Recommended",

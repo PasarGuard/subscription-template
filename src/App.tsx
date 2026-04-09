@@ -383,15 +383,15 @@ function App() {
 
                   <div className="flex-1 w-full space-y-4 sm:space-y-5">
                     <div className="flex justify-between items-center">
-                      <span className="page-label">{t('userInfo.usedTraffic')}</span>
-                      <span dir="ltr" className="page-value">
-                        {formatBytes(effectiveData.used_traffic || 0)}
-                      </span>
-                    </div>
-                    <div className="flex justify-between items-center">
                       <span className="page-label">{t('userInfo.totalLimit')}</span>
                       <span dir="ltr" className="page-value">
                         {effectiveData.data_limit && effectiveData.data_limit > 0 ? formatBytes(effectiveData.data_limit) : t('userInfo.unlimited')}
+                      </span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="page-label">{t('userInfo.usedTraffic')}</span>
+                      <span dir="ltr" className="page-value">
+                        {formatBytes(effectiveData.used_traffic || 0)}
                       </span>
                     </div>
                     <div className="flex justify-between items-center">

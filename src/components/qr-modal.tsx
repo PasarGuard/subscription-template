@@ -79,7 +79,11 @@ export const QRModal = memo(({ link, open, onOpenChange }: QRModalProps) => {
 
   const copiedConfig = isCopied(`${link.raw}:config`);
   const copiedBase64 = isCopied(`${link.raw}:base64`);
-  const protocolBadge = link.protocol === 'unknown' ? 'SUB' : link.protocol === 'wireguard' ? 'WG' : link.protocol;
+  const protocolBadge =
+    link.protocol === 'unknown' ? 'SUB' :
+    link.protocol === 'wireguard' ? 'WG' :
+    link.protocol === 'hysteria' ? 'HY2' :
+    link.protocol;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

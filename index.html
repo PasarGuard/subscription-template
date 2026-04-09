@@ -35,7 +35,9 @@
               'vmess': {'id': user.proxy_settings.vmess.id|string} if user.proxy_settings.vmess else None,
               'vless': {'id': user.proxy_settings.vless.id|string, 'flow': user.proxy_settings.vless.flow.name if user.proxy_settings.vless.flow else None} if user.proxy_settings.vless else None,
               'trojan': {'password': user.proxy_settings.trojan.password} if user.proxy_settings.trojan else None,
-              'shadowsocks': {'password': user.proxy_settings.shadowsocks.password, 'method': user.proxy_settings.shadowsocks.method.name if user.proxy_settings.shadowsocks.method else None} if user.proxy_settings.shadowsocks else None
+              'shadowsocks': {'password': user.proxy_settings.shadowsocks.password, 'method': user.proxy_settings.shadowsocks.method.name if user.proxy_settings.shadowsocks.method else None} if user.proxy_settings.shadowsocks else None,
+              'wireguard': {'public_key': user.proxy_settings.wireguard.public_key, 'peer_ips': user.proxy_settings.wireguard.peer_ips} if user.proxy_settings.wireguard else None,
+              'hysteria': {'auth': user.proxy_settings.hysteria.auth|string} if user.proxy_settings.hysteria else None
             },
             'next_plan': {
               'user_template_id': user.next_plan.user_template_id,

@@ -1,6 +1,6 @@
 export interface ParsedLink {
   raw: string;
-  protocol: 'vless' | 'vmess' | 'trojan' | 'shadowsocks' | 'wireguard' | 'unknown';
+  protocol: 'vless' | 'vmess' | 'trojan' | 'shadowsocks' | 'wireguard' | 'hysteria' | 'unknown';
   name: string;
   server?: string;
   port?: string;
@@ -15,6 +15,7 @@ export function getProtocol(link: string): ParsedLink['protocol'] {
   if (link.startsWith('vmess://')) return 'vmess';
   if (link.startsWith('trojan://')) return 'trojan';
   if (link.startsWith('wireguard://')) return 'wireguard';
+  if (link.startsWith('hysteria2://') || link.startsWith('hysteria://')) return 'hysteria';
   if (link.startsWith('ss://') || link.startsWith('shadowsocks://')) return 'shadowsocks';
   return 'unknown';
 }
@@ -117,7 +118,10 @@ function extractEmoji(text: string): string | undefined {
  * Generates a clean display name for a link
  */
 function generateCleanName(rawName: string, protocol: string, index: number): string {
-  const protocolLabel = protocol === 'wireguard' ? 'WireGuard' : protocol.toUpperCase();
+  const protocolLabel =
+    protocol === 'wireguard' ? 'WireGuard' :
+    protocol === 'hysteria' ? 'Hysteria 2' :
+    protocol.toUpperCase();
 
   if (!rawName) {
     return `${protocolLabel} Config ${index + 1}`;

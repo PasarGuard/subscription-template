@@ -81,7 +81,9 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
 
   const getProtocolBadge = useCallback((protocol: ParsedLink['protocol']) => {
     if (protocol === 'unknown') return 'SUB';
+    if (protocol === 'shadowsocks') return 'SS';
     if (protocol === 'wireguard') return 'WG';
+    if (protocol === 'hysteria') return 'HY2';
     return protocol;
   }, []);
 

@@ -13,6 +13,13 @@ export interface ProxySettings {
     password: string;
     method: string;
   };
+  wireguard?: {
+    public_key: string;
+    peer_ips: string[];
+  };
+  hysteria?: {
+    auth: string;
+  };
 }
 
 export interface NextPlan {

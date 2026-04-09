@@ -13,7 +13,6 @@
     "username": "用户名",
     "status": "状态",
     "usedTraffic": "已用流量",
-    "dataLimit": "流量限制",
     "expireDate": "到期日期",
     "lifetimeTraffic": "总流量",
     "unlimited": "无限制",
@@ -61,7 +60,7 @@
   "notConnectedYet": "尚未连接",
   "expires": "到期时间",
   "expired": "已过期",
-  "remaining": "剩余",
+  "remaining": "剩余流量",
   "time": {
     "ago": "前",
     "second": "秒",
@@ -107,7 +106,7 @@
     "on_hold": "暂停"
   },
   "apps": {
-    "title": "客户端应用",
+    "title": "应用领域",
     "import": "导入",
     "download": "下载",
     "recommended": "推荐",

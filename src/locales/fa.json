@@ -12,12 +12,11 @@
     "title": "اطلاعات کاربر",
     "username": "نام کاربری",
     "status": "وضعیت",
-    "usedTraffic": "ترافیک مصرفی",
-    "dataLimit": "حد ترافیک",
+    "usedTraffic": "حجم مصرفی",
     "expireDate": "تاریخ انقضا",
-    "lifetimeTraffic": "ترافیک کل",
+    "lifetimeTraffic": "حجم کل",
     "unlimited": "نامحدود",
-    "totalLimit": "حد کل",
+    "totalLimit": "حجم سرویس",
     "used": "مصرف شده",
     "lastOnline": "آخرین اتصال",
     "expiryDate": "تاریخ انقضا",
@@ -61,7 +60,7 @@
   "notConnectedYet": "هنوز متصل نشده",
   "expires": "منقضی می‌شود در",
   "expired": "منقضی شده",
-  "remaining": "باقی‌مانده",
+  "remaining": "حجم باقی مانده",
   "time": {
     "ago": "پیش",
     "second": "ثانیه",
@@ -107,7 +106,7 @@
     "on_hold": "در انتظار"
   },
   "apps": {
-    "title": "اپلیکیشن‌های کلاینت",
+    "title": "اپلیکیشن‌ ها",
     "import": "افزودن",
     "download": "دانلود",
     "recommended": "پیشنهادی",

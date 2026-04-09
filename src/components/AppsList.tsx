@@ -5,16 +5,11 @@ import { useApps } from '@/hooks/useUserData'
 import { cn } from '@/lib/utils'
 import { detectOS, getPlatformPriority, mapOSToPlatform } from '@/lib/osDetector'
 import { Download, DownloadCloud } from 'lucide-react'
-import { 
-  FaApple, 
-  FaWindows, 
-  FaDesktop 
-} from 'react-icons/fa'
 import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
+    Accordion,
+    AccordionContent,
+    AccordionItem,
+    AccordionTrigger,
 } from "@/components/ui/accordion"
 
 type PlatformIconProps = {
@@ -33,12 +28,23 @@ const AndroidPlatformIcon = ({ className }: PlatformIconProps) => (
     </svg>
 )
 
+const ApplePlatformIcon = ({ className }: PlatformIconProps) => (
+    <svg width={28} height={28} viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
+        <path d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04c-2.04.027-3.91 1.183-4.961 3.014c-2.117 3.675-.546 9.103 1.519 12.09c1.013 1.454 2.208 3.09 3.792 3.039c1.52-.065 2.09-.987 3.935-.987c1.831 0 2.35.987 3.96.948c1.637-.026 2.676-1.48 3.676-2.948c1.156-1.688 1.636-3.325 1.662-3.415c-.039-.013-3.182-1.221-3.22-4.857c-.026-3.04 2.48-4.494 2.597-4.559c-1.429-2.09-3.623-2.324-4.39-2.376c-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83c-1.207.052-2.662.805-3.532 1.818c-.78.896-1.454 2.338-1.273 3.714c1.338.104 2.715-.688 3.559-1.701" />
+    </svg>
+)
+
+const WindowsPlatformIcon = ({ className }: PlatformIconProps) => (
+    <svg width={28} height={28} viewBox="0 0 24 24" className={className} fill="currentColor" aria-hidden="true">
+        <path d="M0 0h11.377v11.372H0Zm12.623 0H24v11.372H12.623ZM0 12.623h11.377V24H0Zm12.623 0H24V24H12.623" />
+    </svg>
+)
+
 const PLATFORM_ICONS: Record<string, React.ComponentType<PlatformIconProps>> = {
-    ios: FaApple,
+    ios: ApplePlatformIcon,
     android: AndroidPlatformIcon,
-    windows: FaWindows,
+    windows: WindowsPlatformIcon,
     linux: LinuxPlatformIcon,
-    other: FaDesktop
 }
 
 export const AppsList = React.memo(function AppsList() {
@@ -68,7 +74,7 @@ export const AppsList = React.memo(function AppsList() {
     const currentOS = React.useMemo(() => detectOS(), [])
     const platformOrder = React.useMemo(() => getPlatformPriority(currentOS), [currentOS])
     const currentPlatform = React.useMemo(() => mapOSToPlatform(currentOS), [currentOS])
-    
+
     // Get default open accordion (current OS platform)
     const defaultOpenValue = React.useMemo(
         () => (platformGroups[currentPlatform]?.length ? currentPlatform : undefined),
@@ -104,9 +110,9 @@ export const AppsList = React.memo(function AppsList() {
                 {platformOrder
                     .filter((p) => platformGroups[p]?.length)
                     .map((platformKey) => {
-                        const IconComponent = PLATFORM_ICONS[platformKey] || FaDesktop
+                        const IconComponent = PLATFORM_ICONS[platformKey]
                         const isCurrentOS = platformKey === currentPlatform
-                        
+
                         return (
                             <AccordionItem
                                 key={platformKey}
@@ -144,7 +150,7 @@ export const AppsList = React.memo(function AppsList() {
                                             const dlToShow = dlForCurrentLang.length > 0 ? dlForCurrentLang : (dlForEn.length > 0 ? dlForEn : dlAll)
 
                                             return (
-                                                <AppCard 
+                                                <AppCard
                                                     key={`${app.name}-${idx}`}
                                                     app={app}
                                                     desc={desc}
@@ -223,11 +229,11 @@ const AppCard = React.memo(function AppCard({ app, desc, dlToShow, fallbackIcon:
                 <div className="flex flex-wrap gap-1">
                     {/* Download links for current language */}
                     {dlToShow.map((dl, i) => (
-                        <a 
-                            key={i} 
-                            href={dl.url} 
+                        <a
+                            key={i}
+                            href={dl.url}
                             className="text-sm px-2 py-1 rounded border hover:bg-muted inline-flex items-center gap-1 transition-colors"
-                            target="_blank" 
+                            target="_blank"
                             rel="noreferrer"
                             title={dl.name}
                         >
@@ -238,10 +244,10 @@ const AppCard = React.memo(function AppCard({ app, desc, dlToShow, fallbackIcon:
 
                     {/* Import link with primary color */}
                     {app.import_url && (
-                        <a 
-                            href={app.import_url} 
+                        <a
+                            href={app.import_url}
                             className="text-sm px-2 py-1 rounded bg-primary text-primary-foreground hover:opacity-90 inline-flex items-center gap-1 transition-opacity"
-                            target="_blank" 
+                            target="_blank"
                             rel="noreferrer"
                         >
                             <DownloadCloud className="w-3 h-3" />
