@@ -91,6 +91,13 @@
     "tooLong": "لینک برای کد QR خیلی طولانی است",
     "useCopy": "لطفاً از دکمه کپی استفاده کنید"
   },
+  "configActions": {
+    "copyConfig": "کپی کانفیگ",
+    "copyBase64": "کپی Base64",
+    "downloadWireGuard": "دانلود WireGuard",
+    "downloadStarted": "دانلود شروع شد",
+    "downloadFailed": "خطا در دانلود کانفیگ"
+  },
   "clipboard": {
     "copied": "در کلیپ‌بورد کپی شد!",
     "failed": "خطا در کپی کردن",

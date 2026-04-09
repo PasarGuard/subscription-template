@@ -116,9 +116,6 @@ export const AppsList = React.memo(function AppsList() {
                                                     {t('apps.currentOS')}
                                                 </span>
                                             )}
-                                            <span className="page-label ml-auto flex-shrink-0">
-                                                ({platformGroups[platformKey]!.length})
-                                            </span>
                                         </div>
                                     </div>
                                 </AccordionTrigger>

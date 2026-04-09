@@ -1,8 +1,10 @@
 import { useState, memo, useMemo, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Copy, Check, ScanQrCode, Files } from 'lucide-react';
+import { Copy, Check, ScanQrCode, Files, Download } from 'lucide-react';
+import { toast } from 'sonner';
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
 import { parseLinks, type ParsedLink } from '@/lib/linkParser';
+import { downloadTextFile, getWireGuardDownloadPayload, prepareSubscriptionContentForCopy } from '@/lib/subscriptionConfig';
 import { QRModal } from '@/components/qr-modal';
 
 interface ConnectionLinksProps {
@@ -30,7 +32,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
   // Memoize all configs text to avoid recalculating on every render
   const allConfigsText = useMemo(() => {
     const allConfigs = parsedLinks.map(link => link.raw);
-    return allConfigs.join('\n\n');
+    return allConfigs.join('\n');
   }, [parsedLinks]);
 
   // Limit visible links to prevent memory issues with large lists
@@ -42,7 +44,8 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
   const hasMoreLinks = parsedLinks.length > 20;
 
   const handleCopy = useCallback((link: ParsedLink) => {
-    copyToClipboard(link.raw, link.raw);
+    const prepared = prepareSubscriptionContentForCopy(link.raw);
+    copyToClipboard(prepared.content, link.raw);
   }, [copyToClipboard]);
 
   const handleCopySubscription = useCallback(() => {
@@ -59,8 +62,9 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
     if (copyAllTimeoutRef.current) {
       clearTimeout(copyAllTimeoutRef.current);
     }
-    
-    copyToClipboard(allConfigsText, allConfigsText);
+
+    const prepared = prepareSubscriptionContentForCopy(allConfigsText);
+    copyToClipboard(prepared.content, allConfigsText);
     setCopyAllSuccess(true);
     
     // Debounce the success state reset
@@ -68,6 +72,27 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
       setCopyAllSuccess(false);
     }, 2000);
   }, [copyToClipboard, allConfigsText]);
+
+  const handleDownloadWireGuard = useCallback((link: ParsedLink) => {
+    try {
+      const payload = getWireGuardDownloadPayload(link.raw);
+      if (!payload) {
+        throw new Error('WireGuard config not available');
+      }
+
+      downloadTextFile(payload.content, payload.fileName);
+      toast.success(t('configActions.downloadStarted'));
+    } catch (error) {
+      console.error('Failed to download WireGuard config:', error);
+      toast.error(t('configActions.downloadFailed'));
+    }
+  }, [t]);
+
+  const getProtocolBadge = useCallback((protocol: ParsedLink['protocol']) => {
+    if (protocol === 'unknown') return 'SUB';
+    if (protocol === 'wireguard') return 'WG';
+    return protocol;
+  }, []);
 
   return (
     <div className="space-y-3 animate-fadeIn">
@@ -158,7 +183,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
               <div className="flex items-center gap-2">
                 {/* Protocol Badge */}
                 <div className="page-badge px-2 py-0.5 rounded bg-primary text-primary-foreground flex-shrink-0">
-                  {link.protocol}
+                  {getProtocolBadge(link.protocol)}
                 </div>
                 
                 {/* Emoji */}
@@ -173,6 +198,15 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
 
                 {/* Action Buttons */}
                 <div className="flex gap-1 flex-shrink-0">
+                  {getWireGuardDownloadPayload(link.raw) && (
+                    <button
+                      onClick={() => handleDownloadWireGuard(link)}
+                      className="p-1.5 rounded bg-muted hover:bg-secondary transition-all cursor-pointer"
+                      title={t('configActions.downloadWireGuard')}
+                    >
+                      <Download className="w-3.5 h-3.5" />
+                    </button>
+                  )}
                   <button
                     onClick={() => handleCopy(link)}
                     className={`p-1.5 rounded transition-all cursor-pointer ${
@@ -180,7 +214,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
                         ? 'bg-green-600 text-white'
                         : 'bg-muted hover:bg-primary hover:text-primary-foreground'
                     }`}
-                    title={t('qr.copy')}
+                    title={link.protocol === 'unknown' ? t('qr.copy') : t('configActions.copyConfig')}
                   >
                     {copied ? (
                       <Check className="w-3.5 h-3.5" />
@@ -218,8 +252,8 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
         )}
       </div>
 
-      {/* QR Modal - Only render when open to save memory */}
-      {qrModalOpen && selectedLink && (
+      {/* Keep the dialog mounted after close so Radix can play exit animations */}
+      {selectedLink && (
         <QRModal
           link={selectedLink}
           open={qrModalOpen}

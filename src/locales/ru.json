@@ -91,6 +91,13 @@
     "tooLong": "Ссылка слишком длинная для QR-кода",
     "useCopy": "Пожалуйста, используйте кнопку копирования ниже"
   },
+  "configActions": {
+    "copyConfig": "Копировать конфиг",
+    "copyBase64": "Копировать Base64",
+    "downloadWireGuard": "Скачать WireGuard",
+    "downloadStarted": "Загрузка началась",
+    "downloadFailed": "Не удалось скачать конфиг"
+  },
   "clipboard": {
     "copied": "Скопировано в буфер обмена!",
     "failed": "Не удалось скопировать",

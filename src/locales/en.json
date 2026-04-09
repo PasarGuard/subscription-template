@@ -91,6 +91,13 @@
     "tooLong": "Link is too long for QR code",
     "useCopy": "Please use the copy button below"
   },
+  "configActions": {
+    "copyConfig": "Copy Config",
+    "copyBase64": "Copy Base64",
+    "downloadWireGuard": "Download WireGuard",
+    "downloadStarted": "Download started",
+    "downloadFailed": "Failed to download config"
+  },
   "clipboard": {
     "copied": "Copied to clipboard!",
     "failed": "Failed to copy",

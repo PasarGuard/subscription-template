@@ -91,6 +91,13 @@
     "tooLong": "链接过长，无法生成二维码",
     "useCopy": "请使用下方的复制按钮"
   },
+  "configActions": {
+    "copyConfig": "复制配置",
+    "copyBase64": "复制 Base64",
+    "downloadWireGuard": "下载 WireGuard",
+    "downloadStarted": "已开始下载",
+    "downloadFailed": "下载配置失败"
+  },
   "clipboard": {
     "copied": "已复制到剪贴板！",
     "failed": "复制失败",

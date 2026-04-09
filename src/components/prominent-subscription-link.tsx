@@ -93,14 +93,11 @@ export const ProminentSubscriptionLink = memo(({ hasChart }: ProminentSubscripti
         </div>
       </div>
 
-      {/* QR Modal */}
-      {qrModalOpen && (
-        <QRModal
-          link={subscriptionLinkData}
-          open={qrModalOpen}
-          onOpenChange={setQrModalOpen}
-        />
-      )}
+      <QRModal
+        link={subscriptionLinkData}
+        open={qrModalOpen}
+        onOpenChange={setQrModalOpen}
+      />
     </div>
   );
 });

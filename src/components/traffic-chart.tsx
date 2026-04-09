@@ -47,7 +47,15 @@ interface FormattedDataPoint {
   _period_start: string
 }
 
-const CustomTrafficTooltip = React.memo(function CustomTrafficTooltip({ active, payload }: TooltipProps<number, string>) {
+interface CustomTrafficTooltipProps extends TooltipProps<number, string> {
+  timeRange: string
+}
+
+const CustomTrafficTooltip = React.memo(function CustomTrafficTooltip({
+  active,
+  payload,
+  timeRange,
+}: CustomTrafficTooltipProps) {
   const { t, i18n } = useTranslation()
   
   if (!active || !payload || !payload.length) return null
@@ -66,25 +74,33 @@ const CustomTrafficTooltip = React.memo(function CustomTrafficTooltip({ active, 
   // Format date using dateUtils
   const d = dateUtils.toDayjs(data._period_start)
   let formattedDate: string
+  const isShortRange = timeRange === "1h" || timeRange === "12h" || timeRange === "24h"
   
   try {
     if (i18n.language === 'fa') {
+      formattedDate = isShortRange
+        ? d
+            .toDate()
+            .toLocaleTimeString('fa-IR', {
+              hour: '2-digit',
+              minute: '2-digit',
+              hour12: false,
+            })
+        : d
+            .toDate()
+            .toLocaleDateString('fa-IR', {
+              year: 'numeric',
+              month: '2-digit',
+              day: '2-digit',
+            })
+    } else if (isShortRange) {
       formattedDate = d
-        .toDate()
-        .toLocaleString('fa-IR', {
-          year: 'numeric',
-          month: '2-digit',
-          day: '2-digit',
-          hour: '2-digit',
-          minute: '2-digit',
-          hour12: false,
-        })
-        .replace(',', '')
+        .format('YYYY/MM/DD HH:mm')
     } else {
-      formattedDate = d.format('YYYY/MM/DD HH:mm')
+      formattedDate = d.format('YYYY/MM/DD')
     }
   } catch {
-    formattedDate = d.format('YYYY/MM/DD HH:mm')
+    formattedDate = isShortRange ? d.format('YYYY/MM/DD HH:mm') : d.format('YYYY/MM/DD')
   }
   
   const isRTL = i18n.language === 'fa'
@@ -229,7 +245,7 @@ export const TrafficChart = React.memo(function TrafficChart({
                   />
                   <ChartTooltip
                     cursor={false}
-                    content={<CustomTrafficTooltip />}
+                    content={<CustomTrafficTooltip timeRange={timeRange} />}
                   />
                   <Area
                     dataKey="displayTraffic"

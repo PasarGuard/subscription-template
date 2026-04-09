@@ -1,6 +1,6 @@
 export interface ParsedLink {
   raw: string;
-  protocol: 'vless' | 'vmess' | 'trojan' | 'shadowsocks' | 'ss' | 'unknown';
+  protocol: 'vless' | 'vmess' | 'trojan' | 'shadowsocks' | 'wireguard' | 'unknown';
   name: string;
   server?: string;
   port?: string;
@@ -14,6 +14,7 @@ export function getProtocol(link: string): ParsedLink['protocol'] {
   if (link.startsWith('vless://')) return 'vless';
   if (link.startsWith('vmess://')) return 'vmess';
   if (link.startsWith('trojan://')) return 'trojan';
+  if (link.startsWith('wireguard://')) return 'wireguard';
   if (link.startsWith('ss://') || link.startsWith('shadowsocks://')) return 'shadowsocks';
   return 'unknown';
 }
@@ -71,26 +72,34 @@ function extractServerInfo(link: string, protocol: string): { server?: string; p
       }
       return {};
     }
-    
-    // Remove protocol
-    const withoutProtocol = link.split('://')[1];
-    if (!withoutProtocol) return {};
-    
-    // Extract the part before @ or ? or #
-    let serverPart = withoutProtocol.split('@')[1] || withoutProtocol;
-    serverPart = serverPart.split('?')[0];
-    serverPart = serverPart.split('#')[0];
-    
-    // Clean up any extra spaces
-    serverPart = serverPart.trim();
-    
-    const [server, port] = serverPart.split(':');
-    return { 
-      server: server?.trim(), 
-      port: port?.trim() 
+
+    const parsed = new URL(link);
+    return {
+      server: parsed.hostname?.trim(),
+      port: parsed.port?.trim(),
     };
   } catch {
-    return {};
+    try {
+      // Remove protocol
+      const withoutProtocol = link.split('://')[1];
+      if (!withoutProtocol) return {};
+
+      // Extract the part before @ or ? or #
+      let serverPart = withoutProtocol.split('@')[1] || withoutProtocol;
+      serverPart = serverPart.split('?')[0];
+      serverPart = serverPart.split('#')[0];
+
+      // Clean up any extra spaces
+      serverPart = serverPart.trim();
+
+      const [server, port] = serverPart.split(':');
+      return {
+        server: server?.trim(),
+        port: port?.trim(),
+      };
+    } catch {
+      return {};
+    }
   }
 }
 
@@ -108,8 +117,10 @@ function extractEmoji(text: string): string | undefined {
  * Generates a clean display name for a link
  */
 function generateCleanName(rawName: string, protocol: string, index: number): string {
+  const protocolLabel = protocol === 'wireguard' ? 'WireGuard' : protocol.toUpperCase();
+
   if (!rawName) {
-    return `${protocol.toUpperCase()} Config ${index + 1}`;
+    return `${protocolLabel} Config ${index + 1}`;
   }
   
   // Remove emoji from the name for cleaner display
@@ -132,7 +143,7 @@ function generateCleanName(rawName: string, protocol: string, index: number): st
     }
   }
   
-  return cleanName || `${protocol.toUpperCase()} Config ${index + 1}`;
+  return cleanName || `${protocolLabel} Config ${index + 1}`;
 }
 
 /**
