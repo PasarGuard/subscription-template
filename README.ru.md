@@ -14,7 +14,9 @@
 - Адаптивная верстка
 - Темный режим
 - QR-код для ссылок подключения
-- Копирование в один клик
+- Копирование ссылок и конфигов в один клик, включая Base64
+- Ссылки WireGuard можно копировать как нативный конфиг и скачивать в формате `.conf`
+- [Настройка цвета](#color-customization)
 
 ## Быстрый старт (рекомендуется)
 
@@ -47,6 +49,33 @@ SUBSCRIPTION_PAGE_TEMPLATE="subscription/index.html"
 
 ```sh
 pasarguard restart
+```
+
+## Сборка Из Исходников
+
+```sh
+git clone https://github.com/PasarGuard/subscription-template.git
+cd subscription-template
+cp .env.example .env
+bun install
+bun run build
+```
+
+Используйте собранный файл:
+
+```sh
+sudo cp dist/index.html /var/lib/pasarguard/templates/subscription/index.html
+```
+
+<a id="color-customization"></a>
+
+## Настройка Цвета
+
+Укажите это в `.env` и соберите заново:
+
+```dotenv
+VITE_PRIMARY_COLOR_LIGHT=oklch(0.48 0.11 250)
+VITE_PRIMARY_COLOR_DARK=oklch(0.60 0.12 250)
 ```
 
 ## Другие языки

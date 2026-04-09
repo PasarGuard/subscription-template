@@ -14,7 +14,9 @@ PasarGuard 的响应式订阅页面模板。
 - 响应式布局
 - 深色模式
 - 连接链接 QR 码
-- 一键复制
+- 一键复制链接和配置，并支持 Base64 复制
+- WireGuard 链接可复制为原生配置，也可下载为 `.conf`
+- [颜色自定义](#color-customization)
 
 ## 快速安装（推荐）
 
@@ -47,6 +49,33 @@ SUBSCRIPTION_PAGE_TEMPLATE="subscription/index.html"
 
 ```sh
 pasarguard restart
+```
+
+## 从源码构建
+
+```sh
+git clone https://github.com/PasarGuard/subscription-template.git
+cd subscription-template
+cp .env.example .env
+bun install
+bun run build
+```
+
+使用生成的文件：
+
+```sh
+sudo cp dist/index.html /var/lib/pasarguard/templates/subscription/index.html
+```
+
+<a id="color-customization"></a>
+
+## 颜色自定义
+
+在 `.env` 中设置下面的值，然后重新构建：
+
+```dotenv
+VITE_PRIMARY_COLOR_LIGHT=oklch(0.48 0.11 250)
+VITE_PRIMARY_COLOR_DARK=oklch(0.60 0.12 250)
 ```
 
 ## 其他语言
