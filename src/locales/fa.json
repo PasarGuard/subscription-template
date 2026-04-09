@@ -16,6 +16,7 @@
     "expireDate": "تاریخ انقضا",
     "lifetimeTraffic": "حجم کل",
     "unlimited": "نامحدود",
+    "noTimeLimit": "بدون محدودیت زمان",
     "totalLimit": "حجم سرویس",
     "used": "مصرف شده",
     "lastOnline": "آخرین اتصال",

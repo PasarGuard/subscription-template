@@ -116,7 +116,7 @@ export const formatRelativeExpiry = (
   t: (key: string) => string
 ): { status: string; time: string; isExpired: boolean } => {
   if (!expiryDate || expiryDate === 0) {
-    return { status: '∞', time: t('userInfo.unlimited'), isExpired: false }
+    return { status: '', time: t('userInfo.noTimeLimit'), isExpired: false }
   }
 
   const target = dateUtils.toDayjs(expiryDate)

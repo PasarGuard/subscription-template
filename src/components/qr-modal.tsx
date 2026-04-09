@@ -33,7 +33,7 @@ export const QRModal = memo(({ link, open, onOpenChange }: QRModalProps) => {
   const preparedCopyContent = useMemo(() => prepareSubscriptionContentForCopy(link.raw), [link.raw]);
   const wireGuardDownload = useMemo(() => getWireGuardDownloadPayload(link.raw), [link.raw]);
   const isWireGuard = Boolean(wireGuardDownload);
-  const supportsBase64Copy = isWireGuard;
+  const supportsBase64Copy = link.protocol !== 'unknown';
 
   // Check if data is too long for QR code (max ~2950 characters for level L)
   const canGenerateQR = useMemo(() => {

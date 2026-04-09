@@ -16,6 +16,7 @@
     "expireDate": "Expire Date",
     "lifetimeTraffic": "Lifetime Traffic",
     "unlimited": "Unlimited",
+    "noTimeLimit": "No time limit",
     "totalLimit": "Total Limit",
     "used": "Used",
     "lastOnline": "Last Online",

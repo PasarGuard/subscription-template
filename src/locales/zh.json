@@ -16,6 +16,7 @@
     "expireDate": "到期日期",
     "lifetimeTraffic": "总流量",
     "unlimited": "无限制",
+    "noTimeLimit": "无时间限制",
     "totalLimit": "总限制",
     "used": "已使用",
     "lastOnline": "最后在线",

@@ -16,6 +16,7 @@
     "expireDate": "Дата истечения",
     "lifetimeTraffic": "Общий трафик",
     "unlimited": "Неограниченно",
+    "noTimeLimit": "Без лимита по времени",
     "totalLimit": "Общий лимит",
     "used": "Использовано",
     "lastOnline": "Последний раз онлайн",

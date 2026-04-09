@@ -4,7 +4,12 @@ import { Copy, Check, ScanQrCode, Files, Download } from 'lucide-react';
 import { toast } from 'sonner';
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
 import { parseLinks, type ParsedLink } from '@/lib/linkParser';
-import { downloadTextFile, getWireGuardDownloadPayload, prepareSubscriptionContentForCopy } from '@/lib/subscriptionConfig';
+import {
+  downloadTextFile,
+  encodeSubscriptionContentToBase64,
+  getWireGuardDownloadPayload,
+  prepareSubscriptionContentForCopy,
+} from '@/lib/subscriptionConfig';
 import { QRModal } from '@/components/qr-modal';
 
 interface ConnectionLinksProps {
@@ -36,7 +41,13 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
 
   const handleCopy = useCallback((link: ParsedLink) => {
     const prepared = prepareSubscriptionContentForCopy(link.raw);
-    copyToClipboard(prepared.content, link.raw);
+    copyToClipboard(prepared.content, `${link.raw}:config`);
+  }, [copyToClipboard]);
+
+  const handleCopyBase64 = useCallback((link: ParsedLink) => {
+    const prepared = prepareSubscriptionContentForCopy(link.raw);
+    const encodedContent = encodeSubscriptionContentToBase64(prepared.content);
+    copyToClipboard(encodedContent, `${link.raw}:base64`);
   }, [copyToClipboard]);
 
   const handleCopySubscription = useCallback(() => {
@@ -96,7 +107,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
         </h2>
         <button
           onClick={handleCopyAll}
-          className={`group flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-lg ${
+          className={`group cursor-pointer flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-lg ${
             copyAllSuccess 
               ? 'bg-green-600 text-white hover:bg-green-700 shadow-green-600/25' 
               : 'bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-primary/25'
@@ -114,7 +125,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
         </button>
       </div>
       
-      <div className="max-h-[400px] overflow-y-auto space-y-2 scrollbar-thin scrollbar-thumb-primary/20 scrollbar-track-transparent hover:scrollbar-thumb-primary/40">
+      <div className="max-h-[400px] overflow-y-auto space-y-2">
         {/* Subscription Link */}
         <div className="group relative p-3 rounded-lg border-2 border-primary/30 bg-primary/5 hover:border-primary/60 transition-all duration-200">
           <div className="flex items-center gap-2">
@@ -166,7 +177,9 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
         </div>
 
         {parsedLinks.map((link, index) => {
-          const copied = isCopied(link.raw);
+          const copied = isCopied(`${link.raw}:config`);
+          const copiedBase64 = isCopied(`${link.raw}:base64`);
+          const supportsBase64Copy = link.protocol !== 'unknown';
           
           return (
             <div
@@ -215,6 +228,24 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
                       <Copy className="w-3.5 h-3.5" />
                     )}
                   </button>
+
+                  {supportsBase64Copy && (
+                    <button
+                      onClick={() => handleCopyBase64(link)}
+                      className={`p-1.5 rounded transition-all cursor-pointer ${
+                        copiedBase64
+                          ? 'bg-green-600 text-white'
+                          : 'bg-muted hover:bg-primary hover:text-primary-foreground'
+                      }`}
+                      title={t('configActions.copyBase64')}
+                    >
+                      {copiedBase64 ? (
+                        <Check className="w-3.5 h-3.5" />
+                      ) : (
+                        <Files className="w-3.5 h-3.5" />
+                      )}
+                    </button>
+                  )}
                   
                   <button
                     onClick={() => handleShowQR(link)}

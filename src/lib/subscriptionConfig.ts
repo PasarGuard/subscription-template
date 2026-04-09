@@ -126,9 +126,6 @@ export const convertWireGuardUrlToConfig = (value: string) => {
     lines.push(`PersistentKeepalive = ${parsed.keepalive}`)
   }
 
-  lines.push('')
-  lines.push(`# URI: ${parsed.source}`)
-
   return lines.join('\n')
 }
 

@@ -17,7 +17,6 @@ import {
   ChartContainer,
   ChartTooltip,
 } from "@/components/ui/chart"
-import { Spinner } from "@/components/ui/spinner"
 
 const chartConfig = {
   traffic: {
@@ -27,6 +26,16 @@ const chartConfig = {
 } satisfies ChartConfig
 
 const TRAFFIC_SERIES_COLOR = chartConfig.traffic.color ?? "var(--primary)"
+
+const formatBytes = (bytes: number) => {
+  if (bytes === 0) return "0 B"
+
+  const k = 1024
+  const sizes = ["B", "KB", "MB", "GB", "TB"]
+  const i = Math.floor(Math.log(bytes) / Math.log(k))
+
+  return `${(bytes / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`
+}
 
 interface TrafficDataPoint {
   period_start: string
@@ -59,42 +68,33 @@ const CustomTrafficTooltip = React.memo(function CustomTrafficTooltip({
   timeRange,
 }: CustomTrafficTooltipProps) {
   const { t, i18n } = useTranslation()
-  
+
   if (!active || !payload || !payload.length) return null
-  
+
   const data = payload[0].payload as FormattedDataPoint
-  
-  // Format bytes to human-readable
-  const formatBytes = (bytes: number) => {
-    if (bytes === 0) return '0 B'
-    const k = 1024
-    const sizes = ['B', 'KB', 'MB', 'GB', 'TB']
-    const i = Math.floor(Math.log(bytes) / Math.log(k))
-    return `${(bytes / Math.pow(k, i)).toFixed(2)} ${sizes[i]}`
-  }
-  
+
   // Format date using dateUtils
   const d = dateUtils.toDayjs(data._period_start)
   let formattedDate: string
   const isShortRange = timeRange === "1h" || timeRange === "12h" || timeRange === "24h"
-  
+
   try {
     if (i18n.language === 'fa') {
       formattedDate = isShortRange
         ? d
-            .toDate()
-            .toLocaleTimeString('fa-IR', {
-              hour: '2-digit',
-              minute: '2-digit',
-              hour12: false,
-            })
+          .toDate()
+          .toLocaleTimeString('fa-IR', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: false,
+          })
         : d
-            .toDate()
-            .toLocaleDateString('fa-IR', {
-              year: 'numeric',
-              month: '2-digit',
-              day: '2-digit',
-            })
+          .toDate()
+          .toLocaleDateString('fa-IR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+          })
     } else if (isShortRange) {
       formattedDate = d
         .format('YYYY/MM/DD HH:mm')
@@ -104,11 +104,11 @@ const CustomTrafficTooltip = React.memo(function CustomTrafficTooltip({
   } catch {
     formattedDate = isShortRange ? d.format('YYYY/MM/DD HH:mm') : d.format('YYYY/MM/DD')
   }
-  
+
   const isRTL = i18n.language === 'fa'
-  
+
   return (
-    <div 
+    <div
       className={`min-w-[140px] rounded-lg border border-border bg-background p-3 text-sm shadow-xl ${isRTL ? 'text-right' : 'text-left'}`}
       dir={isRTL ? 'rtl' : 'ltr'}
     >
@@ -127,12 +127,12 @@ const CustomTrafficTooltip = React.memo(function CustomTrafficTooltip({
   )
 })
 
-export const TrafficChart = React.memo(function TrafficChart({ 
-  data, 
-  isLoading = false, 
-  error, 
+export const TrafficChart = React.memo(function TrafficChart({
+  data,
+  isLoading = false,
+  error,
   timeRange = "7d",
-  onTimeRangeChange 
+  onTimeRangeChange
 }: TrafficChartProps) {
   const { t, i18n } = useTranslation()
 
@@ -150,6 +150,10 @@ export const TrafficChart = React.memo(function TrafficChart({
     }))
   }, [data])
   const hasChartPoints = filteredData.length > 0
+  const totalUsedBytes = React.useMemo(
+    () => data?.reduce((sum, point) => sum + point.total_traffic, 0) ?? 0,
+    [data]
+  )
 
   const timeRangeOptions = React.useMemo(() => ([
     { value: '1h', label: t('timeRange.1h') || '1h' },
@@ -163,17 +167,25 @@ export const TrafficChart = React.memo(function TrafficChart({
   return (
     <Card className="overflow-hidden">
       <CardHeader className="flex flex-col gap-4 space-y-0 border-b pb-4">
-        <CardTitle className="page-section-title">{t('usage.title')}</CardTitle>
+        <div className="flex flex-wrap items-center justify-between w-full">
+          <CardTitle className="page-section-title">{t('usage.title')}</CardTitle>
+          <div className="flex items-center gap-2 text-sm font-semibold text-primary">
+            {totalUsedBytes > 0 && (
+              <span dir="ltr" className="font-semibold">
+                {formatBytes(totalUsedBytes)}
+              </span>
+            )}
+          </div>
+        </div>
         <div className="flex flex-wrap gap-2">
           {timeRangeOptions.map((option) => (
             <button
               key={option.value}
               onClick={() => onTimeRangeChange?.(option.value)}
-              className={`px-3 py-1.5 text-sm font-medium rounded-lg transition-all ${
-                timeRange === option.value
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'bg-muted text-muted-foreground hover:bg-muted/80'
-              }`}
+              className={`px-3 cursor-pointer py-1.5 text-sm font-medium rounded-lg transition-all ${timeRange === option.value
+                ? 'bg-primary text-primary-foreground shadow-sm'
+                : 'bg-muted text-muted-foreground hover:bg-muted/80'
+                }`}
             >
               {option.label}
             </button>
@@ -193,7 +205,7 @@ export const TrafficChart = React.memo(function TrafficChart({
               className="aspect-auto h-[250px] w-full max-w-full"
             >
               {hasChartPoints ? (
-                <AreaChart 
+                <AreaChart
                   data={filteredData}
                   margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
                 >
@@ -218,7 +230,7 @@ export const TrafficChart = React.memo(function TrafficChart({
                     axisLine={false}
                     tickMargin={8}
                     minTickGap={16}
-                    tick={{ 
+                    tick={{
                       fill: 'hsl(var(--muted-foreground))',
                       fontSize: 11
                     }}
@@ -272,16 +284,13 @@ export const TrafficChart = React.memo(function TrafficChart({
                 <div className="h-full w-full" />
               )}
             </ChartContainer>
-            
+
             {/* Loading Overlay - Only shown when loading */}
             {isLoading && (
               <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex items-center justify-center z-10">
-                <div className="flex flex-col items-center gap-3">
-                  <Spinner size="2xl" className="text-primary" />
-                  <span className="text-sm text-muted-foreground">
-                    {t('common.loading')}
-                  </span>
-                </div>
+                <span className="text-muted-foreground">
+                  {t('common.loading')}
+                </span>
               </div>
             )}
           </div>

@@ -137,7 +137,15 @@ function App() {
     if (!effectiveData) return { status: '', time: '', isExpired: false };
 
     // For on_hold status, show available duration instead of expiry
-    if (effectiveData.status === 'on_hold' && effectiveData.on_hold_expire_duration) {
+    if (effectiveData.status === 'on_hold') {
+      if (!effectiveData.on_hold_expire_duration || effectiveData.on_hold_expire_duration === 0) {
+        return {
+          status: t('userInfo.available'),
+          time: t('userInfo.noTimeLimit'),
+          isExpired: false
+        };
+      }
+
       const days = Math.floor(effectiveData.on_hold_expire_duration / 86400); // Convert seconds to days
       const hours = Math.floor((effectiveData.on_hold_expire_duration % 86400) / 3600);
 
@@ -432,7 +440,7 @@ function App() {
                         if (!effectiveData.on_hold_expire_duration || effectiveData.on_hold_expire_duration === 0) {
                           return (
                             <div dir="ltr" className="page-value">
-                              ∞
+                              {t('userInfo.noTimeLimit')}
                             </div>
                           );
                         }
@@ -449,7 +457,7 @@ function App() {
                               ? `${days} ${t(days === 1 ? 'time.day' : 'time.days')}`
                               : hours > 0
                                 ? `${hours} ${t(hours === 1 ? 'time.hour' : 'time.hours')}`
-                                : '∞'}
+                                : t('userInfo.noTimeLimit')}
                           </div>
                         );
                       }
@@ -458,7 +466,7 @@ function App() {
                       return (
                         <div dir='ltr' className="page-value">
                           {isUnlimited
-                            ? '∞'
+                            ? t('userInfo.noTimeLimit')
                             : formatDate(effectiveData.expire, i18n.language === 'fa' ? 'fa-IR' : i18n.language)}
                         </div>
                       );
