@@ -56,7 +56,6 @@ pasarguard restart
 ```sh
 git clone https://github.com/PasarGuard/subscription-template.git
 cd subscription-template
-cp .env.example .env
 bun install
 bun run build
 ```
