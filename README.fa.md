@@ -14,9 +14,16 @@
 - طراحی واکنش‌گرا
 - حالت تاریک
 - QR برای لینک‌های اتصال
-- کپی لینک و کانفیگ با یک کلیک، همراه با کپی Base64
+- کپی لینک و کانفیگ با یک کلیک، با امکان کپی Base64 فقط در مودال QR
 - لینک‌های WireGuard به صورت کانفیگ اصلی هم قابل کپی و دانلود با فرمت `.conf` هستند
-- [شخصی‌سازی رنگ](#color-customization)
+- [شخصی‌سازی ظاهر](#appearance-customization)
+
+## سازگاری
+
+| نسخه قالب اشتراک | نسخه پنل PasarGuard |
+| --- | --- |
+| `v2` | `v3` |
+| سایر نسخه‌ها | `v2`، `v1` |
 
 ## نصب سریع (پیشنهادی)
 
@@ -27,6 +34,8 @@ curl -fsSL https://raw.githubusercontent.com/PasarGuard/subscription-template/ma
 ```
 
 مقادیر معتبر `--lang`: `en`، `fa`، `zh`، `ru`
+مقادیر معتبر `--version`: `latest` (پیش‌فرض) یا یک تگ انتشار مثل `v2.0.0`
+برای نصب یک نسخه مشخص، `--version <tag>` را اضافه کنید.
 
 ## نصب دستی
 
@@ -66,15 +75,16 @@ bun run build
 sudo cp dist/index.html /var/lib/pasarguard/templates/subscription/index.html
 ```
 
-<a id="color-customization"></a>
+<a id="appearance-customization"></a>
 
-## شخصی‌سازی رنگ
+## شخصی‌سازی ظاهر
 
 این مقادیر را در `.env` تنظیم کنید و دوباره build بگیرید:
 
 ```dotenv
 VITE_PRIMARY_COLOR_LIGHT=oklch(0.48 0.11 250)
 VITE_PRIMARY_COLOR_DARK=oklch(0.60 0.12 250)
+VITE_BORDER_RADIUS=0.65rem
 ```
 
 ## زبان‌های دیگر

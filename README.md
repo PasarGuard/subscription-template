@@ -14,9 +14,16 @@ Responsive subscription page template for PasarGuard.
 - Responsive layout
 - Dark mode
 - QR code for connection links
-- Copy links/configs in one click, with Base64 copy available in the QR modal
+- Copy links/configs in one click, with Base64 copy available only in the QR modal
 - WireGuard links can be copied as native config or downloaded as `.conf`
 - [Appearance customization](#appearance-customization)
+
+## Compatibility
+
+| Subscription Template | PasarGuard Panel |
+| --- | --- |
+| `v2` | `v3` |
+| Other versions | `v2`, `v1` |
 
 ## Quick Start (Recommended)
 
@@ -27,6 +34,8 @@ curl -fsSL https://raw.githubusercontent.com/PasarGuard/subscription-template/ma
 ```
 
 Supported values for `--lang`: `en`, `fa`, `zh`, `ru`
+Supported values for `--version`: `latest` (default) or a release tag like `v2.0.0`
+To install a specific release, add `--version <tag>`.
 
 ## Manual Install
 

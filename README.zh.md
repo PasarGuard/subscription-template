@@ -14,9 +14,16 @@ PasarGuard 的响应式订阅页面模板。
 - 响应式布局
 - 深色模式
 - 连接链接 QR 码
-- 一键复制链接和配置，并支持 Base64 复制
+- 一键复制链接和配置，Base64 复制仅在 QR 弹窗中提供
 - WireGuard 链接可复制为原生配置，也可下载为 `.conf`
-- [颜色自定义](#color-customization)
+- [外观自定义](#appearance-customization)
+
+## 兼容性
+
+| 订阅模板版本 | PasarGuard 面板版本 |
+| --- | --- |
+| `v2` | `v3` |
+| 其他版本 | `v2`、`v1` |
 
 ## 快速安装（推荐）
 
@@ -27,6 +34,8 @@ curl -fsSL https://raw.githubusercontent.com/PasarGuard/subscription-template/ma
 ```
 
 `--lang` 支持：`en`、`fa`、`zh`、`ru`
+`--version` 支持：`latest`（默认）或像 `v2.0.0` 这样的发布标签
+如需安装指定版本，请添加 `--version <tag>`。
 
 ## 手动安装
 
@@ -66,15 +75,16 @@ bun run build
 sudo cp dist/index.html /var/lib/pasarguard/templates/subscription/index.html
 ```
 
-<a id="color-customization"></a>
+<a id="appearance-customization"></a>
 
-## 颜色自定义
+## 外观自定义
 
 在 `.env` 中设置下面的值，然后重新构建：
 
 ```dotenv
 VITE_PRIMARY_COLOR_LIGHT=oklch(0.48 0.11 250)
 VITE_PRIMARY_COLOR_DARK=oklch(0.60 0.12 250)
+VITE_BORDER_RADIUS=0.65rem
 ```
 
 ## 其他语言

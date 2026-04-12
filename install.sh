@@ -2,17 +2,19 @@
 set -euo pipefail
 
 LANG_CODE="fa"
+VERSION="latest"
 DEST_DIR="/var/lib/pasarguard/templates/subscription"
 DEST_FILE="${DEST_DIR}/index.html"
 ENV_FILE="/opt/pasarguard/.env"
 
 usage() {
   cat <<'EOF'
-Usage: install.sh [--lang en|fa|zh|ru]
+Usage: install.sh [--lang en|fa|zh|ru] [--version latest|<tag>]
 
 Examples:
   install.sh
   install.sh --lang en
+  install.sh --lang fa --version v2.0.0
 EOF
 }
 
@@ -24,6 +26,14 @@ while [[ $# -gt 0 ]]; do
         exit 1
       fi
       LANG_CODE="$2"
+      shift 2
+      ;;
+    --version)
+      if [[ $# -lt 2 ]]; then
+        echo "Error: --version needs a value (latest|<tag>)." >&2
+        exit 1
+      fi
+      VERSION="$2"
       shift 2
       ;;
     -h|--help)
@@ -46,9 +56,19 @@ case "${LANG_CODE}" in
     ;;
 esac
 
-URL="https://github.com/PasarGuard/subscription-template/releases/latest/download/${LANG_CODE}.html"
+if [[ -z "${VERSION}" ]]; then
+  echo "Error: version cannot be empty. Use 'latest' or a release tag like 'v2.0.0'." >&2
+  exit 1
+fi
+
+RELEASE_PATH="latest/download"
+if [[ "${VERSION}" != "latest" ]]; then
+  RELEASE_PATH="download/${VERSION}"
+fi
+
+URL="https://github.com/PasarGuard/subscription-template/releases/${RELEASE_PATH}/${LANG_CODE}.html"
 if [[ "${LANG_CODE}" == "fa" ]]; then
-  URL="https://github.com/PasarGuard/subscription-template/releases/latest/download/index.html"
+  URL="https://github.com/PasarGuard/subscription-template/releases/${RELEASE_PATH}/index.html"
 fi
 
 mkdir -p "${DEST_DIR}"
@@ -79,8 +99,8 @@ fi
 
 if command -v pasarguard >/dev/null 2>&1; then
   pasarguard restart
-  echo "Installed and restarted PasarGuard."
+  echo "Installed template (${LANG_CODE}, ${VERSION}) and restarted PasarGuard."
 else
-  echo "Installed template at ${DEST_FILE}."
+  echo "Installed template (${LANG_CODE}, ${VERSION}) at ${DEST_FILE}."
   echo "pasarguard command not found, restart service manually."
 fi

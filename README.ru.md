@@ -14,9 +14,16 @@
 - Адаптивная верстка
 - Темный режим
 - QR-код для ссылок подключения
-- Копирование ссылок и конфигов в один клик, включая Base64
+- Копирование ссылок и конфигов в один клик, а Base64 доступен только в QR-модальном окне
 - Ссылки WireGuard можно копировать как нативный конфиг и скачивать в формате `.conf`
-- [Настройка цвета](#color-customization)
+- [Настройка внешнего вида](#appearance-customization)
+
+## Совместимость
+
+| Версия шаблона подписки | Версия панели PasarGuard |
+| --- | --- |
+| `v2` | `v3` |
+| Остальные версии | `v2`, `v1` |
 
 ## Быстрый старт (рекомендуется)
 
@@ -27,6 +34,8 @@ curl -fsSL https://raw.githubusercontent.com/PasarGuard/subscription-template/ma
 ```
 
 Поддерживаемые значения `--lang`: `en`, `fa`, `zh`, `ru`
+Поддерживаемые значения `--version`: `latest` (по умолчанию) или тег релиза, например `v2.0.0`
+Чтобы установить конкретный релиз, добавьте `--version <tag>`.
 
 ## Установка вручную
 
@@ -66,15 +75,16 @@ bun run build
 sudo cp dist/index.html /var/lib/pasarguard/templates/subscription/index.html
 ```
 
-<a id="color-customization"></a>
+<a id="appearance-customization"></a>
 
-## Настройка Цвета
+## Настройка Внешнего Вида
 
 Укажите это в `.env` и соберите заново:
 
 ```dotenv
 VITE_PRIMARY_COLOR_LIGHT=oklch(0.48 0.11 250)
 VITE_PRIMARY_COLOR_DARK=oklch(0.60 0.12 250)
+VITE_BORDER_RADIUS=0.65rem
 ```
 
 ## Другие языки
