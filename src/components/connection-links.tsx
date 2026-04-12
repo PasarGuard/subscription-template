@@ -6,7 +6,6 @@ import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
 import { parseLinks, type ParsedLink } from '@/lib/linkParser';
 import {
   downloadTextFile,
-  encodeSubscriptionContentToBase64,
   getWireGuardDownloadPayload,
   prepareSubscriptionContentForCopy,
 } from '@/lib/subscriptionConfig';
@@ -28,8 +27,8 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
   const parsedLinks = useMemo(() => parseLinks(links), [links]);
 
   // Memoize subscription URL to avoid recalculating on every render
-  const subscriptionUrl = useMemo(() => 
-    `${window.location.origin}${window.location.pathname.replace(/\/info$/, '')}`, 
+  const subscriptionUrl = useMemo(() =>
+    `${window.location.origin}${window.location.pathname.replace(/\/info$/, '')}`,
     []
   );
 
@@ -42,12 +41,6 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
   const handleCopy = useCallback((link: ParsedLink) => {
     const prepared = prepareSubscriptionContentForCopy(link.raw);
     copyToClipboard(prepared.content, `${link.raw}:config`);
-  }, [copyToClipboard]);
-
-  const handleCopyBase64 = useCallback((link: ParsedLink) => {
-    const prepared = prepareSubscriptionContentForCopy(link.raw);
-    const encodedContent = encodeSubscriptionContentToBase64(prepared.content);
-    copyToClipboard(encodedContent, `${link.raw}:base64`);
   }, [copyToClipboard]);
 
   const handleCopySubscription = useCallback(() => {
@@ -68,7 +61,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
     const prepared = prepareSubscriptionContentForCopy(allConfigsText);
     copyToClipboard(prepared.content, allConfigsText);
     setCopyAllSuccess(true);
-    
+
     // Debounce the success state reset
     copyAllTimeoutRef.current = setTimeout(() => {
       setCopyAllSuccess(false);
@@ -107,11 +100,10 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
         </h2>
         <button
           onClick={handleCopyAll}
-          className={`group cursor-pointer flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-lg ${
-            copyAllSuccess 
-              ? 'bg-green-600 text-white hover:bg-green-700 shadow-green-600/25' 
+          className={`group cursor-pointer flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-lg ${copyAllSuccess
+              ? 'bg-green-600 text-white hover:bg-green-700 shadow-green-600/25'
               : 'bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-primary/25'
-          }`}
+            }`}
           title={copyAllSuccess ? t('apps.copyAllSuccess') : t('apps.copyAll')}
         >
           {copyAllSuccess ? (
@@ -124,33 +116,32 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
           </span>
         </button>
       </div>
-      
+
       <div className="max-h-[400px] overflow-y-auto space-y-2">
         {/* Subscription Link */}
         <div className="group relative p-3 rounded-lg border-2 border-primary/30 bg-primary/5 hover:border-primary/60 transition-all duration-200">
           <div className="flex items-center gap-2">
             {/* Subscription Badge */}
-            <div className="page-badge px-2 py-0.5 rounded bg-primary text-primary-foreground flex-shrink-0">
+            <div className="page-badge px-2 py-0.5 rounded bg-primary text-primary-foreground shrink-0">
               SUB
             </div>
-            
+
             {/* Emoji */}
             <span className="text-sm">📱</span>
-            
+
             {/* Name */}
             <div className="page-item-title flex-1 min-w-0 truncate">
               {t('config.subscriptionLink')}
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-1 flex-shrink-0">
+            <div className="flex gap-1 shrink-0">
               <button
                 onClick={handleCopySubscription}
-                className={`p-1.5 rounded transition-all cursor-pointer ${
-                  isCopied(subscriptionUrl)
+                className={`p-1.5 rounded transition-all cursor-pointer ${isCopied(subscriptionUrl)
                     ? 'bg-green-600 text-white'
                     : 'bg-muted hover:bg-primary hover:text-primary-foreground'
-                }`}
+                  }`}
                 title={t('qr.copy')}
               >
                 {isCopied(subscriptionUrl) ? (
@@ -159,7 +150,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
                   <Copy className="w-3.5 h-3.5" />
                 )}
               </button>
-              
+
               <button
                 onClick={() => handleShowQR({
                   protocol: 'unknown',
@@ -175,90 +166,70 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
             </div>
           </div>
         </div>
+        <div className="space-y-2 xl:max-h-[400px] xl:overflow-y-auto xl:min-h-0">
+          {parsedLinks.map((link, index) => {
+            const copied = isCopied(`${link.raw}:config`);
 
-        {parsedLinks.map((link, index) => {
-          const copied = isCopied(`${link.raw}:config`);
-          const copiedBase64 = isCopied(`${link.raw}:base64`);
-          const supportsBase64Copy = link.protocol !== 'unknown';
-          
-          return (
-            <div
-              key={index}
-              className="group relative p-3 rounded-lg border bg-card hover:border-primary/50 transition-all duration-200"
-            >
-              <div className="flex items-center gap-2">
-                {/* Protocol Badge */}
-                <div className="page-badge px-2 py-0.5 rounded bg-primary text-primary-foreground flex-shrink-0">
-                  {getProtocolBadge(link.protocol)}
-                </div>
-                
-                {/* Emoji */}
-                {link.emoji && (
-                  <span className="text-sm">{link.emoji}</span>
-                )}
-                
-                {/* Name */}
-                <div className="page-item-title flex-1 min-w-0 truncate">
-                  {link.name}
-                </div>
+            return (
+              <div
+                key={index}
+                className="group relative p-3 rounded-lg border bg-card hover:border-primary/50 transition-all duration-200"
+              >
+                <div className="flex items-center gap-2">
+                  {/* Protocol Badge */}
+                  <div className="page-badge px-2 py-0.5 rounded bg-primary text-primary-foreground shrink-0">
+                    {getProtocolBadge(link.protocol)}
+                  </div>
 
-                {/* Action Buttons */}
-                <div className="flex gap-1 flex-shrink-0">
-                  {getWireGuardDownloadPayload(link.raw) && (
-                    <button
-                      onClick={() => handleDownloadWireGuard(link)}
-                      className="p-1.5 rounded bg-muted hover:bg-secondary transition-all cursor-pointer"
-                      title={t('configActions.downloadWireGuard')}
-                    >
-                      <Download className="w-3.5 h-3.5" />
-                    </button>
+                  {/* Emoji */}
+                  {link.emoji && (
+                    <span className="text-sm">{link.emoji}</span>
                   )}
-                  <button
-                    onClick={() => handleCopy(link)}
-                    className={`p-1.5 rounded transition-all cursor-pointer ${
-                      copied
-                        ? 'bg-green-600 text-white'
-                        : 'bg-muted hover:bg-primary hover:text-primary-foreground'
-                    }`}
-                    title={link.protocol === 'unknown' ? t('qr.copy') : t('configActions.copyConfig')}
-                  >
-                    {copied ? (
-                      <Check className="w-3.5 h-3.5" />
-                    ) : (
-                      <Copy className="w-3.5 h-3.5" />
-                    )}
-                  </button>
 
-                  {supportsBase64Copy && (
+                  {/* Name */}
+                  <div className="page-item-title flex-1 min-w-0 truncate">
+                    {link.name}
+                  </div>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-1 shrink-0">
+                    {getWireGuardDownloadPayload(link.raw) && (
+                      <button
+                        onClick={() => handleDownloadWireGuard(link)}
+                        className="p-1.5 rounded bg-muted hover:bg-secondary transition-all cursor-pointer"
+                        title={t('configActions.downloadWireGuard')}
+                      >
+                        <Download className="w-3.5 h-3.5" />
+                      </button>
+                    )}
                     <button
-                      onClick={() => handleCopyBase64(link)}
-                      className={`p-1.5 rounded transition-all cursor-pointer ${
-                        copiedBase64
+                      onClick={() => handleCopy(link)}
+                      className={`p-1.5 rounded transition-all cursor-pointer ${copied
                           ? 'bg-green-600 text-white'
                           : 'bg-muted hover:bg-primary hover:text-primary-foreground'
-                      }`}
-                      title={t('configActions.copyBase64')}
+                        }`}
+                      title={link.protocol === 'unknown' ? t('qr.copy') : t('configActions.copyConfig')}
                     >
-                      {copiedBase64 ? (
+                      {copied ? (
                         <Check className="w-3.5 h-3.5" />
                       ) : (
-                        <Files className="w-3.5 h-3.5" />
+                        <Copy className="w-3.5 h-3.5" />
                       )}
                     </button>
-                  )}
-                  
-                  <button
-                    onClick={() => handleShowQR(link)}
-                    className="p-1.5 rounded bg-muted hover:bg-secondary transition-all cursor-pointer"
-                    title={t('qr.show')}
-                  >
-                    <ScanQrCode className="w-3.5 h-3.5" />
-                  </button>
+
+                    <button
+                      onClick={() => handleShowQR(link)}
+                      className="p-1.5 rounded bg-muted hover:bg-secondary transition-all cursor-pointer"
+                      title={t('qr.show')}
+                    >
+                      <ScanQrCode className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          );
-        })}
+            );
+          })}
+        </div>
 
       </div>
 

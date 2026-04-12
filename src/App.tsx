@@ -285,7 +285,7 @@ function App() {
               <div className="mb-6 sm:mb-8 animate-fadeIn">
                 <div className="p-4 rounded-2xl border bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20 hover:shadow-lg transition-all duration-300">
                   <div className="flex items-start gap-3">
-                    <div className="flex-shrink-0 mt-0.5">
+                    <div className="shrink-0 mt-0.5">
                       <Bell className="w-5 h-5 text-primary" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -340,7 +340,7 @@ function App() {
 
                 {/* Circular Progress */}
                 <div className="flex flex-col sm:flex-row items-center gap-6 sm:gap-8">
-                  <div className="relative w-32 h-32 sm:w-36 sm:h-36 lg:w-40 lg:h-40 flex-shrink-0">
+                  <div className="relative w-32 h-32 sm:w-36 sm:h-36 lg:w-40 lg:h-40 shrink-0">
                     <svg className="transform -rotate-90 w-full h-full">
                       <circle
                         cx="50%"

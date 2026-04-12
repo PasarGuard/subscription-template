@@ -51,7 +51,7 @@ export const ProminentSubscriptionLink = memo(({ hasChart }: ProminentSubscripti
         <div className="group relative p-3 rounded-lg border-2 border-primary/30 bg-primary/5 hover:border-primary/60 transition-all duration-200">
           <div className="flex items-center gap-2">
             {/* Subscription Badge */}
-            <div className="page-badge px-2 py-0.5 rounded bg-primary text-primary-foreground flex-shrink-0">
+            <div className="page-badge px-2 py-0.5 rounded bg-primary text-primary-foreground shrink-0">
               SUB
             </div>
             
@@ -64,7 +64,7 @@ export const ProminentSubscriptionLink = memo(({ hasChart }: ProminentSubscripti
             </div>
 
             {/* Action Buttons */}
-            <div className="flex gap-1 flex-shrink-0">
+            <div className="flex gap-1 shrink-0">
               <button
                 onClick={handleCopy}
                 className={`p-1.5 rounded transition-all cursor-pointer ${

@@ -4,10 +4,13 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
+  --radius-xs: max(calc(var(--radius) - 0.525rem), 0.125rem);
+  --radius-sm: max(calc(var(--radius) - 4px), 0px);
+  --radius-md: max(calc(var(--radius) - 2px), 0px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 0.35rem);
+  --radius-3xl: calc(var(--radius) + 0.85rem);
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --color-card: var(--card);

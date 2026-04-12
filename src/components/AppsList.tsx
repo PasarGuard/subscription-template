@@ -124,15 +124,15 @@ export const AppsList = React.memo(function AppsList() {
                                     isCurrentOS && "ring-1 ring-primary/30 bg-card/60"
                                 )}
                             >
-                                <AccordionTrigger className="px-4 sm:px-6 py-4 sm:py-5 hover:no-underline items-center cursor-pointer [&[data-state=open]]:bg-card/40 transition-colors">
+                                <AccordionTrigger className="px-4 sm:px-6 py-4 sm:py-5 hover:no-underline items-center cursor-pointer data-[state=open]:bg-card/40 transition-colors">
                                     <div className="flex items-center gap-3 flex-1 text-left">
-                                        <IconComponent className="text-2xl sm:text-3xl text-foreground flex-shrink-0" />
+                                        <IconComponent className="text-2xl sm:text-3xl text-foreground shrink-0" />
                                         <div className="flex items-center gap-2 flex-1 min-w-0">
                                             <h3 className="page-section-title">
                                                 {t(`apps.platform.${platformKey}`)}
                                             </h3>
                                             {isCurrentOS && (
-                                                <span className="page-badge px-2 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 flex-shrink-0">
+                                                <span className="page-badge px-2 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 shrink-0">
                                                     {t('apps.currentOS')}
                                                 </span>
                                             )}
@@ -196,11 +196,11 @@ const AppCard = React.memo(function AppCard({ app, desc, dlToShow, fallbackIcon:
                     <img
                         src={app.icon_url}
                         alt={app.name}
-                        className="w-8 h-8 rounded object-cover flex-shrink-0"
+                        className="w-8 h-8 rounded object-cover shrink-0"
                         onError={() => setIconLoadFailed(true)}
                     />
                 ) : (
-                    <div className="w-8 h-8 rounded bg-muted flex items-center justify-center flex-shrink-0">
+                    <div className="w-8 h-8 rounded bg-muted flex items-center justify-center shrink-0">
                         <FallbackIcon className="w-4.5 h-4.5 text-muted-foreground" />
                     </div>
                 )}
@@ -208,7 +208,7 @@ const AppCard = React.memo(function AppCard({ app, desc, dlToShow, fallbackIcon:
                     <div className="flex items-center gap-1.5">
                         <h4 className="page-item-title truncate">{app.name}</h4>
                         {app.recommended && (
-                            <span className="page-badge px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 flex-shrink-0">
+                            <span className="page-badge px-1.5 py-0.5 rounded bg-primary/10 text-primary border border-primary/20 shrink-0">
                                 {t('apps.recommended')}
                             </span>
                         )}

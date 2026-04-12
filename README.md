@@ -14,9 +14,9 @@ Responsive subscription page template for PasarGuard.
 - Responsive layout
 - Dark mode
 - QR code for connection links
-- Copy links/configs in one click, including Base64 copy
+- Copy links/configs in one click, with Base64 copy available in the QR modal
 - WireGuard links can be copied as native config or downloaded as `.conf`
-- [Color customization](#color-customization)
+- [Appearance customization](#appearance-customization)
 
 ## Quick Start (Recommended)
 
@@ -66,15 +66,16 @@ Use the built file:
 sudo cp dist/index.html /var/lib/pasarguard/templates/subscription/index.html
 ```
 
-<a id="color-customization"></a>
+<a id="appearance-customization"></a>
 
-## Color Customization
+## Appearance Customization
 
 Set these in `.env` and build again:
 
 ```dotenv
 VITE_PRIMARY_COLOR_LIGHT=oklch(0.48 0.11 250)
 VITE_PRIMARY_COLOR_DARK=oklch(0.60 0.12 250)
+VITE_BORDER_RADIUS=0.65rem
 ```
 
 ## Other Languages
