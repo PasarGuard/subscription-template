@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { useCopyToClipboard } from '@/hooks/useCopyToClipboard';
 import { useDir } from '@/hooks/useDir';
+import { cn } from '@/lib/utils';
 import type { ParsedLink } from '@/lib/linkParser';
 import {
   downloadTextFile,
@@ -163,7 +164,7 @@ export const QRModal = memo(({ link, open, onOpenChange }: QRModalProps) => {
             {link.emoji && (
               <span className="text-sm sm:text-base">{link.emoji}</span>
             )}
-            <span className="page-item-title flex-1 truncate">
+            <span dir="ltr" className={cn("page-item-title flex-1 truncate", dir === 'rtl' ? 'text-right' : 'text-left')}>
               {link.name}
             </span>
           </div>

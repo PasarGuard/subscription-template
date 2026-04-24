@@ -10,6 +10,8 @@ import {
   prepareSubscriptionContentForCopy,
 } from '@/lib/subscriptionConfig';
 import { QRModal } from '@/components/qr-modal';
+import { useDir } from '@/hooks/useDir';
+import { cn } from '@/lib/utils';
 
 interface ConnectionLinksProps {
   links: string[];
@@ -17,6 +19,7 @@ interface ConnectionLinksProps {
 
 export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
   const { t } = useTranslation();
+  const dir = useDir();
   const { copyToClipboard, isCopied } = useCopyToClipboard();
   const [selectedLink, setSelectedLink] = useState<ParsedLink | null>(null);
   const [qrModalOpen, setQrModalOpen] = useState(false);
@@ -187,7 +190,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
                   )}
 
                   {/* Name */}
-                  <div className="page-item-title flex-1 min-w-0 truncate">
+                  <div dir="ltr" className={cn("page-item-title flex-1 min-w-0 truncate", dir === 'rtl' ? 'text-right' : 'text-left')}>
                     {link.name}
                   </div>
 
