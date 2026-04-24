@@ -1,4 +1,4 @@
-import { memo, useCallback, useMemo } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { QRCodeCanvas } from 'qrcode.react';
 import { Copy, Check, ScanQrCode, AlertCircle, Download } from 'lucide-react';
@@ -26,19 +26,27 @@ interface QRModalProps {
   onOpenChange: (open: boolean) => void;
 }
 
+type WireGuardQrMode = 'config' | 'uri';
+
 export const QRModal = memo(({ link, open, onOpenChange }: QRModalProps) => {
   const { t } = useTranslation();
   const { copyToClipboard, isCopied } = useCopyToClipboard();
   const dir = useDir();
+  const [wireGuardQrMode, setWireGuardQrMode] = useState<WireGuardQrMode>('config');
   const preparedCopyContent = useMemo(() => prepareSubscriptionContentForCopy(link.raw), [link.raw]);
   const wireGuardDownload = useMemo(() => getWireGuardDownloadPayload(link.raw), [link.raw]);
   const isWireGuard = Boolean(wireGuardDownload);
   const supportsBase64Copy = link.protocol !== 'unknown';
+  const qrValue = wireGuardDownload && wireGuardQrMode === 'config' ? wireGuardDownload.content : link.raw;
+
+  useEffect(() => {
+    setWireGuardQrMode('config');
+  }, [link.raw]);
 
   // Check if data is too long for QR code (max ~2950 characters for level L)
   const canGenerateQR = useMemo(() => {
-    return link.raw.length <= 2900; // Safe limit for QR level L
-  }, [link.raw]);
+    return qrValue.length <= 2900; // Safe limit for QR level L
+  }, [qrValue]);
 
   // Calculate QR size based on viewport
   const qrSize = useMemo(() => {
@@ -98,11 +106,37 @@ export const QRModal = memo(({ link, open, onOpenChange }: QRModalProps) => {
         </DialogHeader>
         
         <div className="flex flex-col items-center gap-3 sm:gap-4 py-1 sm:py-2 overflow-hidden">
+          {wireGuardDownload && (
+            <div
+              className="inline-flex rounded-md border border-border bg-muted/30 p-1"
+              aria-label={t('qr.format')}
+            >
+              <Button
+                type="button"
+                size="sm"
+                variant={wireGuardQrMode === 'config' ? 'default' : 'ghost'}
+                className="h-7 px-2.5 text-xs"
+                onClick={() => setWireGuardQrMode('config')}
+              >
+                {t('qr.config')}
+              </Button>
+              <Button
+                type="button"
+                size="sm"
+                variant={wireGuardQrMode === 'uri' ? 'default' : 'ghost'}
+                className="h-7 px-2.5 text-xs"
+                onClick={() => setWireGuardQrMode('uri')}
+              >
+                URI
+              </Button>
+            </div>
+          )}
+
           {/* QR Code Display */}
           {canGenerateQR ? (
             <div className="flex justify-center items-center p-2 sm:p-3 bg-white rounded-lg sm:rounded-xl shadow-sm w-full max-w-full">
               <QRCodeCanvas 
-                value={link.raw}
+                value={qrValue}
                 size={qrSize}
                 level="L"
                 className="w-auto h-auto max-w-full"

@@ -85,7 +85,9 @@
     "close": "Закрыть",
     "error": "Не удалось создать QR-код",
     "tooLong": "Ссылка слишком длинная для QR-кода",
-    "useCopy": "Пожалуйста, используйте кнопку копирования ниже"
+    "useCopy": "Пожалуйста, используйте кнопку копирования ниже",
+    "format": "Формат QR-кода",
+    "config": "Конфиг"
   },
   "configActions": {
     "copyConfig": "Копировать конфиг",
@@ -120,9 +122,11 @@
       "ios": "iOS",
       "android": "Android",
       "windows": "Windows",
+      "macos": "macOS",
       "linux": "Linux",
+      "appletv": "Apple TV",
+      "androidtv": "Android TV",
       "other": "Другое"
     }
   }
 }
-

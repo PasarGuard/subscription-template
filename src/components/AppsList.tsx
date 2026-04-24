@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import { useApps } from '@/hooks/useUserData'
 import { cn } from '@/lib/utils'
 import { detectOS, getPlatformPriority, mapOSToPlatform } from '@/lib/osDetector'
-import { Download, DownloadCloud } from 'lucide-react'
+import { Download, DownloadCloud, Monitor, Tv } from 'lucide-react'
 import {
     Accordion,
     AccordionContent,
@@ -42,9 +42,13 @@ const WindowsPlatformIcon = ({ className }: PlatformIconProps) => (
 
 const PLATFORM_ICONS: Record<string, React.ComponentType<PlatformIconProps>> = {
     ios: ApplePlatformIcon,
+    macos: ApplePlatformIcon,
+    appletv: Tv,
     android: AndroidPlatformIcon,
+    androidtv: Tv,
     windows: WindowsPlatformIcon,
     linux: LinuxPlatformIcon,
+    other: Monitor,
 }
 
 export const AppsList = React.memo(function AppsList() {
@@ -74,6 +78,15 @@ export const AppsList = React.memo(function AppsList() {
     const currentOS = React.useMemo(() => detectOS(), [])
     const platformOrder = React.useMemo(() => getPlatformPriority(currentOS), [currentOS])
     const currentPlatform = React.useMemo(() => mapOSToPlatform(currentOS), [currentOS])
+    const orderedPlatformKeys = React.useMemo(
+        () => [
+            ...platformOrder.filter((platformKey) => platformGroups[platformKey]?.length),
+            ...Object.keys(platformGroups)
+                .filter((platformKey) => !platformOrder.some((knownPlatform) => knownPlatform === platformKey))
+                .sort(),
+        ],
+        [platformGroups, platformOrder]
+    )
 
     // Get default open accordion (current OS platform)
     const defaultOpenValue = React.useMemo(
@@ -107,11 +120,11 @@ export const AppsList = React.memo(function AppsList() {
                 defaultValue={defaultOpenValue}
                 className="w-full space-y-3"
             >
-                {platformOrder
-                    .filter((p) => platformGroups[p]?.length)
+                {orderedPlatformKeys
                     .map((platformKey) => {
-                        const IconComponent = PLATFORM_ICONS[platformKey]
+                        const IconComponent = PLATFORM_ICONS[platformKey] ?? Monitor
                         const isCurrentOS = platformKey === currentPlatform
+                        const platformLabel = t(`apps.platform.${platformKey}`, { defaultValue: platformKey })
 
                         return (
                             <AccordionItem
@@ -129,7 +142,7 @@ export const AppsList = React.memo(function AppsList() {
                                         <IconComponent className="text-2xl sm:text-3xl text-foreground shrink-0" />
                                         <div className="flex items-center gap-2 flex-1 min-w-0">
                                             <h3 className="page-section-title">
-                                                {t(`apps.platform.${platformKey}`)}
+                                                {platformLabel}
                                             </h3>
                                             {isCurrentOS && (
                                                 <span className="page-badge px-2 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 shrink-0">
@@ -259,5 +272,4 @@ const AppCard = React.memo(function AppCard({ app, desc, dlToShow, fallbackIcon:
         </div>
     )
 })
-
 

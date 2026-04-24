@@ -85,7 +85,9 @@
     "close": "关闭",
     "error": "无法生成二维码",
     "tooLong": "链接过长，无法生成二维码",
-    "useCopy": "请使用下方的复制按钮"
+    "useCopy": "请使用下方的复制按钮",
+    "format": "二维码格式",
+    "config": "配置"
   },
   "configActions": {
     "copyConfig": "复制配置",
@@ -120,9 +122,11 @@
       "ios": "iOS",
       "android": "Android",
       "windows": "Windows",
+      "macos": "macOS",
       "linux": "Linux",
+      "appletv": "Apple TV",
+      "androidtv": "Android TV",
       "other": "其他"
     }
   }
 }
-

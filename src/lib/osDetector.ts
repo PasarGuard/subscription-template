@@ -3,7 +3,10 @@
  * Detects the current operating system based on user agent and platform
  */
 
-export type OperatingSystem = 'windows' | 'macos' | 'linux' | 'android' | 'ios' | 'unknown';
+export type OperatingSystem = 'windows' | 'macos' | 'linux' | 'android' | 'ios' | 'appletv' | 'androidtv' | 'unknown';
+export type AppPlatform = Exclude<OperatingSystem, 'unknown'> | 'other';
+
+const APP_PLATFORM_ORDER: AppPlatform[] = ['ios', 'android', 'windows', 'macos', 'linux', 'appletv', 'androidtv', 'other'];
 
 export function detectOS(): OperatingSystem {
   if (typeof window === 'undefined') {
@@ -18,12 +21,35 @@ export function detectOS(): OperatingSystem {
   const userAgentData = (navigator as any).userAgentData;
   if (userAgentData?.platform) {
     const uaPlatform = userAgentData.platform.toLowerCase();
+    if (uaPlatform.includes('tvos') || uaPlatform.includes('apple tv')) {
+      return 'appletv';
+    }
     if (uaPlatform.includes('android')) {
+      if (/android tv|google tv|googletv|fire tv|firetv/.test(userAgent)) {
+        return 'androidtv';
+      }
       return 'android';
     }
     if (uaPlatform.includes('ios') || uaPlatform === 'iphone' || uaPlatform === 'ipad') {
       return 'ios';
     }
+    if (uaPlatform.includes('windows')) {
+      return 'windows';
+    }
+    if (uaPlatform.includes('mac')) {
+      return 'macos';
+    }
+    if (uaPlatform.includes('linux')) {
+      return 'linux';
+    }
+  }
+
+  if (/tvos|apple tv|appletv/.test(userAgent)) {
+    return 'appletv';
+  }
+
+  if (/android tv|google tv|googletv|fire tv|firetv/.test(userAgent)) {
+    return 'androidtv';
   }
 
   // iOS detection (before Android to avoid conflicts)
@@ -75,15 +101,20 @@ export function detectOS(): OperatingSystem {
 /**
  * Maps detected OS to app platform names used in the API
  */
-export function mapOSToPlatform(os: OperatingSystem): string {
+export function mapOSToPlatform(os: OperatingSystem): AppPlatform {
   switch (os) {
     case 'windows':
       return 'windows';
     case 'macos':
+      return 'macos';
     case 'ios':
-      return 'ios'; // macOS and iOS use similar apps
+      return 'ios';
     case 'android':
       return 'android';
+    case 'androidtv':
+      return 'androidtv';
+    case 'appletv':
+      return 'appletv';
     case 'linux':
       return 'linux';
     default:
@@ -94,19 +125,13 @@ export function mapOSToPlatform(os: OperatingSystem): string {
 /**
  * Gets the priority order for platforms based on current OS
  */
-export function getPlatformPriority(currentOS: OperatingSystem): string[] {
+export function getPlatformPriority(currentOS: OperatingSystem): AppPlatform[] {
   const currentPlatform = mapOSToPlatform(currentOS);
-  
-  // Start with current platform, then add others
-  const baseOrder = ['ios', 'android', 'windows', 'linux', 'other'];
-  const currentIndex = baseOrder.indexOf(currentPlatform);
+  const currentIndex = APP_PLATFORM_ORDER.indexOf(currentPlatform);
   
   if (currentIndex === -1) {
-    // If current platform not found, return default order
-    return baseOrder;
+    return APP_PLATFORM_ORDER;
   }
   
-  // Move current platform to front
-  const reordered = [currentPlatform, ...baseOrder.filter(p => p !== currentPlatform)];
-  return reordered;
+  return [currentPlatform, ...APP_PLATFORM_ORDER.filter(p => p !== currentPlatform)];
 }

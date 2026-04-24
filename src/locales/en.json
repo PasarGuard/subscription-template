@@ -85,7 +85,9 @@
     "close": "Close",
     "error": "Failed to generate QR code",
     "tooLong": "Link is too long for QR code",
-    "useCopy": "Please use the copy button below"
+    "useCopy": "Please use the copy button below",
+    "format": "QR code format",
+    "config": "Config"
   },
   "configActions": {
     "copyConfig": "Copy Config",
@@ -120,9 +122,11 @@
       "ios": "iOS",
       "android": "Android",
       "windows": "Windows",
+      "macos": "macOS",
       "linux": "Linux",
+      "appletv": "Apple TV",
+      "androidtv": "Android TV",
       "other": "Other"
     }
   }
 }
-
