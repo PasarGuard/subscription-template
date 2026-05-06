@@ -69,7 +69,7 @@ export const ProminentSubscriptionLink = memo(({ hasChart }: ProminentSubscripti
                 onClick={handleCopy}
                 className={`p-1.5 rounded transition-all cursor-pointer ${
                   isCopied(subscriptionUrl)
-                    ? 'bg-green-600 text-white'
+                    ? 'bg-primary text-primary-foreground'
                     : 'bg-muted hover:bg-primary hover:text-primary-foreground'
                 }`}
                 title={t('qr.copy')}

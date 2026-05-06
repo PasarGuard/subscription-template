@@ -104,7 +104,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
         <button
           onClick={handleCopyAll}
           className={`group cursor-pointer flex items-center gap-2 px-3 py-1.5 text-sm rounded-lg transition-all duration-200 hover:scale-105 active:scale-95 hover:shadow-lg ${copyAllSuccess
-              ? 'bg-green-600 text-white hover:bg-green-700 shadow-green-600/25'
+              ? 'bg-primary text-primary-foreground hover:bg-primary/90 shadow-primary/25'
               : 'bg-primary text-primary-foreground hover:bg-primary/90 hover:shadow-primary/25'
             }`}
           title={copyAllSuccess ? t('apps.copyAllSuccess') : t('apps.copyAll')}
@@ -142,7 +142,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
               <button
                 onClick={handleCopySubscription}
                 className={`p-1.5 rounded transition-all cursor-pointer ${isCopied(subscriptionUrl)
-                    ? 'bg-green-600 text-white'
+                    ? 'bg-primary text-primary-foreground'
                     : 'bg-muted hover:bg-primary hover:text-primary-foreground'
                   }`}
                 title={t('qr.copy')}
@@ -208,7 +208,7 @@ export const ConnectionLinks = memo(({ links }: ConnectionLinksProps) => {
                     <button
                       onClick={() => handleCopy(link)}
                       className={`p-1.5 rounded transition-all cursor-pointer ${copied
-                          ? 'bg-green-600 text-white'
+                          ? 'bg-primary text-primary-foreground'
                           : 'bg-muted hover:bg-primary hover:text-primary-foreground'
                         }`}
                       title={link.protocol === 'unknown' ? t('qr.copy') : t('configActions.copyConfig')}
