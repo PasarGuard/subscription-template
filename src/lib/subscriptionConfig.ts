@@ -1,5 +1,5 @@
 const WIREGUARD_PROTOCOL = 'wireguard://'
-const TEXT_FILE_MIME_TYPE = 'text/plain;charset=utf-8'
+const TEXT_FILE_MIME_TYPE = 'application/octet-stream'
 
 const safeDecodeURIComponent = (value: string) => {
   try {
@@ -15,6 +15,20 @@ const formatCommaSeparatedValue = (value: string) =>
     .map(item => item.trim())
     .filter(Boolean)
     .join(', ')
+
+const getSearchParam = (params: URLSearchParams, name: string) => {
+  const directValue = params.get(name)
+  if (directValue !== null) return directValue
+
+  const normalizedName = name.toLowerCase()
+  for (const [key, value] of params.entries()) {
+    if (key.toLowerCase() === normalizedName) {
+      return value
+    }
+  }
+
+  return ''
+}
 
 const sanitizeFileNameSegment = (value: string | null | undefined) => {
   if (!value) return ''
@@ -38,6 +52,7 @@ const getWireGuardEndpointHost = (hostname: string) => {
 type ParsedWireGuardUri = {
   address: string
   allowedIps: string
+  dns: string
   endpoint: string
   mtu: string
   port: string
@@ -63,18 +78,19 @@ const parseWireGuardUri = (value: string): ParsedWireGuardUri | null => {
     const endpointHost = getWireGuardEndpointHost(hostname)
 
     return {
-      address: parsed.searchParams.get('address') || '',
-      allowedIps: parsed.searchParams.get('allowedips') || '',
+      address: getSearchParam(parsed.searchParams, 'address'),
+      allowedIps: getSearchParam(parsed.searchParams, 'allowedips'),
+      dns: getSearchParam(parsed.searchParams, 'dns'),
       endpoint: port ? `${endpointHost}:${port}` : endpointHost,
-      mtu: parsed.searchParams.get('mtu') || '',
+      mtu: getSearchParam(parsed.searchParams, 'mtu'),
       port,
-      preSharedKey: parsed.searchParams.get('presharedkey') || '',
+      preSharedKey: getSearchParam(parsed.searchParams, 'presharedkey'),
       privateKey: safeDecodeURIComponent(parsed.username),
-      publicKey: parsed.searchParams.get('publickey') || '',
+      publicKey: getSearchParam(parsed.searchParams, 'publickey'),
       remark: safeDecodeURIComponent(parsed.hash.replace(/^#/, '')),
-      reserved: parsed.searchParams.get('reserved') || '',
+      reserved: getSearchParam(parsed.searchParams, 'reserved'),
       source,
-      keepalive: parsed.searchParams.get('keepalive') || '',
+      keepalive: getSearchParam(parsed.searchParams, 'keepalive'),
     }
   } catch {
     return null
@@ -99,6 +115,10 @@ export const convertWireGuardUrlToConfig = (value: string) => {
   lines.push('[Interface]')
   lines.push(`PrivateKey = ${parsed.privateKey}`)
   lines.push(`Address = ${formatCommaSeparatedValue(parsed.address)}`)
+
+  if (parsed.dns) {
+    lines.push(`DNS = ${formatCommaSeparatedValue(parsed.dns)}`)
+  }
 
   if (parsed.mtu) {
     lines.push(`MTU = ${parsed.mtu}`)

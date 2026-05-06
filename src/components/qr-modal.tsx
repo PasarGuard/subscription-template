@@ -192,7 +192,7 @@ export const QRModal = memo(({ link, open, onOpenChange }: QRModalProps) => {
               <Button
                 onClick={handleCopyBase64}
                 size="sm"
-                variant="outline"
+                variant={copiedBase64 ? 'default' : 'outline'}
                 className="w-full gap-2 h-10 text-sm"
               >
                 {copiedBase64 ? (
