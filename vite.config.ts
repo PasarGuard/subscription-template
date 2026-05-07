@@ -3,13 +3,23 @@ import tailwindcss from "@tailwindcss/vite"
 import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
 import { viteSingleFile } from "vite-plugin-singlefile";
+// @ts-expect-error generate-php is a JS utility without type declarations.
+import { generateIndexPHP } from "./generate-php"
 
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [
     react(), 
     tailwindcss(), 
-    viteSingleFile()
+    viteSingleFile(),
+    {
+      name: "generate-index-php",
+      apply: "build",
+      closeBundle() {
+        const buildPath = "dist"
+        generateIndexPHP(buildPath)
+      },
+    },
   ],
   resolve: {
     alias: {
